@@ -108,24 +108,24 @@ const STAFF_USERS: Array<{
   branch?: string;
   approvalLimit?: number;
 }> = [
-  { name: "Anita Rao", email: "admin@sahayog.coop", role: "ADMIN", branch: "Head Office" },
-  { name: "Ravi Kumar", email: "officer@sahayog.coop", role: "LOAN_OFFICER", branch: "Khammam Main" },
-  { name: "Lakshmi Prasad", email: "officer2@sahayog.coop", role: "LOAN_OFFICER", branch: "Wyra" },
-  { name: "Sunita Iyer", email: "manager@sahayog.coop", role: "MANAGER", branch: "Khammam Main", approvalLimit: 2500000 },
-  { name: "Mohan Reddy", email: "manager2@sahayog.coop", role: "MANAGER", branch: "Wyra", approvalLimit: 1500000 },
-  { name: "Devendra Singh", email: "committee1@sahayog.coop", role: "COMMITTEE_MEMBER", branch: "Head Office", approvalLimit: 20000000 },
-  { name: "Farida Khan", email: "committee2@sahayog.coop", role: "COMMITTEE_MEMBER", branch: "Head Office", approvalLimit: 20000000 },
-  { name: "Arjun Mehta", email: "committee3@sahayog.coop", role: "COMMITTEE_MEMBER", branch: "Head Office", approvalLimit: 20000000 },
-  { name: "Priya Subramaniam", email: "committee4@sahayog.coop", role: "COMMITTEE_MEMBER", branch: "Head Office", approvalLimit: 20000000 },
-  { name: "Karan Bose", email: "committee5@sahayog.coop", role: "COMMITTEE_MEMBER", branch: "Head Office", approvalLimit: 20000000 },
-  { name: "Meera Nair", email: "disbursal@sahayog.coop", role: "DISBURSAL_OFFICER", branch: "Head Office" },
+  { name: "Anita Rao", email: "admin@sahyog.coop", role: "ADMIN", branch: "Head Office" },
+  { name: "Ravi Kumar", email: "officer@sahyog.coop", role: "LOAN_OFFICER", branch: "Khammam Main" },
+  { name: "Lakshmi Prasad", email: "officer2@sahyog.coop", role: "LOAN_OFFICER", branch: "Wyra" },
+  { name: "Sunita Iyer", email: "manager@sahyog.coop", role: "MANAGER", branch: "Khammam Main", approvalLimit: 2500000 },
+  { name: "Mohan Reddy", email: "manager2@sahyog.coop", role: "MANAGER", branch: "Wyra", approvalLimit: 1500000 },
+  { name: "Devendra Singh", email: "committee1@sahyog.coop", role: "COMMITTEE_MEMBER", branch: "Head Office", approvalLimit: 20000000 },
+  { name: "Farida Khan", email: "committee2@sahyog.coop", role: "COMMITTEE_MEMBER", branch: "Head Office", approvalLimit: 20000000 },
+  { name: "Arjun Mehta", email: "committee3@sahyog.coop", role: "COMMITTEE_MEMBER", branch: "Head Office", approvalLimit: 20000000 },
+  { name: "Priya Subramaniam", email: "committee4@sahyog.coop", role: "COMMITTEE_MEMBER", branch: "Head Office", approvalLimit: 20000000 },
+  { name: "Karan Bose", email: "committee5@sahyog.coop", role: "COMMITTEE_MEMBER", branch: "Head Office", approvalLimit: 20000000 },
+  { name: "Meera Nair", email: "disbursal@sahyog.coop", role: "DISBURSAL_OFFICER", branch: "Head Office" },
 ];
 
 async function main() {
   const tenant = await prisma.tenant.upsert({
-    where: { slug: "sahayog" },
+    where: { slug: "sahyog" },
     update: {},
-    create: { slug: "sahayog", name: "Sahayog Cooperative Bank" },
+    create: { slug: "sahyog", name: "Sahyog Cooperative Bank" },
   });
 
   for (const scheme of SCHEMES) {

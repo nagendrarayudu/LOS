@@ -8,7 +8,7 @@ import { asyncHandler, HttpError } from "../middleware/errorHandler.js";
 
 export const authRouter = Router();
 
-const DEFAULT_TENANT_SLUG = "sahayog";
+const DEFAULT_TENANT_SLUG = "sahyog";
 
 async function getDefaultTenant() {
   const tenant = await prisma.tenant.findUnique({ where: { slug: DEFAULT_TENANT_SLUG } });

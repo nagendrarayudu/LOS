@@ -1,8 +1,8 @@
 {
-  "name": "sahayog-los",
+  "name": "sahyog-los",
   "private": true,
   "version": "0.1.0",
-  "description": "Sahayog LOS - Loan Origination System for cooperative and rural banks",
+  "description": "Sahyog LOS - Loan Origination System for cooperative and rural banks",
   "workspaces": [
     "backend",
     "frontend"

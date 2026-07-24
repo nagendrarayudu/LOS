@@ -13,7 +13,7 @@ function Shell({ children }: { children: React.ReactNode }) {
     <div className="sp">
       <aside className="sp-sidebar">
         <div className="sp-sidebar-brand">
-          Sahayog LOS
+          Sahyog LOS
           <span>Staff Portal</span>
         </div>
         <div className="sp-nav-item active" onClick={() => navigate('/staff/applications')}>

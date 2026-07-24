@@ -37,7 +37,7 @@ export function Landing() {
       <nav className="lp-nav">
         <div className="lp-nav-brand">
           <div>
-            <div className="lp-nav-name">Sahayog LOS</div>
+            <div className="lp-nav-name">Sahyog LOS</div>
             <div className="lp-nav-sub">Loan Origination System</div>
           </div>
         </div>
@@ -285,12 +285,12 @@ export function Landing() {
       </section>
 
       <footer className="lp-footer">
-        <div className="lp-ftr-copy">© 2026 Sahayog LOS · Demo build</div>
+        <div className="lp-ftr-copy">© 2026 Sahyog LOS · Demo build</div>
         <div className="lp-ftr-links">
           <Link to="/apply">Customer portal</Link>
           <Link to="/staff">Staff LOS</Link>
         </div>
-        <div className="lp-ftr-brand">Sahayog LOS</div>
+        <div className="lp-ftr-brand">Sahyog LOS</div>
       </footer>
     </div>
   )

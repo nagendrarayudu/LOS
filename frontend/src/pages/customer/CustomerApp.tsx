@@ -12,7 +12,7 @@ function Shell({ children }: { children: React.ReactNode }) {
     <div className="cp">
       <header className="cp-header">
         <Link to="/" className="cp-header-brand">
-          Sahayog LOS
+          Sahyog LOS
           <span>Customer Portal</span>
         </Link>
         <div className="cp-header-right">

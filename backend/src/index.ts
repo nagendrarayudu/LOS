@@ -28,5 +28,5 @@ app.use(errorHandler);
 const port = Number(process.env.PORT ?? 4000);
 app.listen(port, () => {
   // eslint-disable-next-line no-console
-  console.log(`Sahayog LOS backend listening on :${port}`);
+  console.log(`Sahyog LOS backend listening on :${port}`);
 });

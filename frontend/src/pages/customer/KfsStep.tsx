@@ -88,7 +88,7 @@ export function KfsStep({ application, onBack, onSubmitted }: Props) {
 
       <div className="cp-demo-hint" style={{ background: '#fff', border: '1px solid var(--line)', color: 'var(--stone)' }}>
         <b style={{ color: 'var(--ink)' }}>Grievance Redressal:</b> K. Lakshmi Narayana, Grievance Redressal Officer ·
-        grievance@sahayogbank.in · 1800-425-9090 · Mon–Sat 10 AM–6 PM. Unresolved complaints may be escalated to the
+        grievance@sahyogbank.in · 1800-425-9090 · Mon–Sat 10 AM–6 PM. Unresolved complaints may be escalated to the
         RBI Ombudsman (cms.rbi.org.in / 14448).
       </div>
 

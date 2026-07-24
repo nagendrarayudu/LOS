@@ -23,7 +23,7 @@ const NEXT_STEPS: Record<string, string> = {
   MAKER_REVIEW: 'Your income, KYC and credit profile are being assessed.',
   COMMITTEE_REVIEW: 'Your loan amount requires credit committee approval — this can take a little longer.',
   SANCTIONED: 'Your loan is sanctioned! Disbursal will follow once bank details are verified.',
-  DISBURSED: 'Funds have been transferred to your account. Welcome to Sahayog!',
+  DISBURSED: 'Funds have been transferred to your account. Welcome to Sahyog!',
   REJECTED: 'Unfortunately this application was not approved. Contact your branch for details.',
 }
 

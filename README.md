@@ -1,4 +1,4 @@
-# Sahayog LOS — Loan Origination System
+# Sahyog LOS — Loan Origination System
 
 A full-stack loan origination system for a cooperative bank, built from three visual
 prototypes (`design/index.html`, `design/customer.html`, `design/staff.html`) into a
@@ -48,10 +48,10 @@ npm install
 
 # 2. configure the backend
 cp backend/.env.example backend/.env
-# edit backend/.env if your Postgres isn't at postgresql://los:los@localhost:5432/sahayog_los
+# edit backend/.env if your Postgres isn't at postgresql://los:los@localhost:5432/sahyog_los
 
 # 3. create the database, run migrations, seed demo data
-createdb sahayog_los   # or: psql -c "CREATE DATABASE sahayog_los"
+createdb sahyog_los   # or: psql -c "CREATE DATABASE sahyog_los"
 npm run prisma:migrate --workspace backend
 npm run prisma:seed --workspace backend
 
@@ -65,10 +65,10 @@ npm run dev:frontend   # http://localhost:5173 (proxies /api to the backend)
 - **Customer**: any 10-digit mobile number; OTP is always `123456` in development
   (no SMS gateway is wired up).
 - **Staff**: password `Passw0rd!` for every seeded account —
-  `admin@sahayog.coop`, `officer@sahayog.coop` / `officer2@` (Loan Officer / maker),
-  `manager@sahayog.coop` / `manager2@` (Manager / checker),
-  `committee1@sahayog.coop` … `committee5@sahayog.coop` (Credit Committee),
-  `disbursal@sahayog.coop` (Disbursal Officer).
+  `admin@sahyog.coop`, `officer@sahyog.coop` / `officer2@` (Loan Officer / maker),
+  `manager@sahyog.coop` / `manager2@` (Manager / checker),
+  `committee1@sahyog.coop` … `committee5@sahyog.coop` (Credit Committee),
+  `disbursal@sahyog.coop` (Disbursal Officer).
 
 ## Project layout
 
