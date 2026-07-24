@@ -1,0 +1,654 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<meta name="theme-color" content="#1B3A6B"/>
+<title>Sahayog LOS — Loan Origination System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --navy:   #1B3A6B;
+  --navy2:  #2A4D7F;
+  --navy3:  #3A5F8F;
+  --saffron:#10B981;
+  --safSoft:#ECFDF5;
+  --safMid: #6EE7B7;
+  --cream:  #FBF7F0;
+  --creamD: #F0EAE0;
+  --stone:  #6B7280;
+  --stone2: #9CA3AF;
+  --ink:    #1F2937;
+  --card:   #FFFFFF;
+  --line:   #E5E7EB;
+  --line2:  #F3F4F6;
+  --green:  #10B981;
+  --greenS: #ECFDF5;
+  --fail:   #EF4444;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{background:var(--cream);color:var(--ink);font-family:'Inter',system-ui,sans-serif;
+  -webkit-font-smoothing:antialiased;line-height:1;}
+a{color:inherit;text-decoration:none;}
+.serif{font-family:'DM Serif Display',Georgia,serif;}
+
+/* ── NAV ── */
+nav{
+  position:sticky;top:0;z-index:100;
+  background:var(--navy);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 40px;height:60px;
+}
+.nav-brand{display:flex;align-items:center;gap:12px;}
+.nav-mark{
+  width:34px;height:34px;border-radius:8px;
+  background:var(--saffron);
+  display:flex;align-items:center;justify-content:center;
+}
+.nav-mark svg{display:block;}
+.nav-name{color:#fff;font-size:15px;font-weight:700;letter-spacing:0.2px;}
+.nav-sub{color:var(--stone2);font-size:10px;letter-spacing:0.6px;text-transform:uppercase;margin-top:2px;}
+.nav-links{display:flex;gap:28px;}
+.nav-links a{color:rgba(255,255,255,0.6);font-size:13px;font-weight:500;transition:color .15s;}
+.nav-links a:hover{color:#fff;}
+.nav-btns{display:flex;gap:10px;}
+.btn-ghost{height:34px;padding:0 16px;border-radius:8px;border:1px solid rgba(255,255,255,0.2);
+  background:transparent;color:rgba(255,255,255,0.8);font-family:inherit;font-size:13px;font-weight:500;cursor:pointer;}
+.btn-saffron{height:34px;padding:0 16px;border-radius:8px;border:none;
+  background:var(--saffron);color:#fff;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;}
+
+/* ── HERO ── */
+.hero{
+  background:var(--navy);
+  padding:80px 40px 0;
+  position:relative;overflow:hidden;
+}
+.hero-rule{
+  position:absolute;left:0;right:0;bottom:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--saffron),transparent);
+  opacity:0.4;
+}
+.hero-grid{max-width:1160px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:flex-end;}
+.hero-left{padding-bottom:72px;}
+.hero-eyebrow{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(212,132,26,0.15);border:1px solid rgba(212,132,26,0.3);
+  border-radius:4px;padding:5px 12px;
+  font-size:11px;font-weight:600;color:var(--safMid);letter-spacing:0.8px;text-transform:uppercase;
+  margin-bottom:24px;
+}
+.hero-eyebrow span{width:6px;height:6px;border-radius:999px;background:var(--saffron);display:inline-block;}
+h1.hero-h1{
+  font-family:'DM Serif Display',Georgia,serif;
+  font-size:clamp(38px,5vw,62px);
+  line-height:1.08;letter-spacing:-0.5px;
+  color:#fff;margin-bottom:20px;
+}
+h1.hero-h1 em{color:var(--safMid);font-style:italic;}
+.hero-body{font-size:16px;color:rgba(255,255,255,0.55);line-height:1.65;max-width:480px;margin-bottom:36px;}
+.hero-btns{display:flex;gap:12px;flex-wrap:wrap;}
+.btn-primary{
+  display:inline-flex;align-items:center;gap:8px;
+  height:48px;padding:0 24px;border-radius:10px;border:none;
+  background:var(--saffron);color:#fff;font-family:inherit;font-size:15px;font-weight:600;cursor:pointer;
+  transition:background .15s;
+}
+.btn-primary:hover{background:#B8700F;}
+.btn-outline{
+  display:inline-flex;align-items:center;gap:8px;
+  height:48px;padding:0 24px;border-radius:10px;
+  border:1px solid #2E6BE6;background:#2E6BE6;
+  color:#fff;font-family:inherit;font-size:15px;font-weight:500;cursor:pointer;
+}
+.btn-outline:hover{background:#2557C7;}
+
+.hero-stats{display:flex;gap:0;margin-top:48px;border-top:1px solid rgba(255,255,255,0.08);}
+.stat-item{flex:1;padding:20px 0;border-right:1px solid rgba(255,255,255,0.08);}
+.stat-item:last-child{border-right:none;}
+.stat-num{font-size:26px;font-weight:700;color:#fff;letter-spacing:-0.5px;}
+.stat-lbl{font-size:11px;color:rgba(255,255,255,0.4);letter-spacing:0.5px;text-transform:uppercase;margin-top:4px;}
+
+/* ── HERO RIGHT: Scheme card stack ── */
+.hero-right{position:relative;height:420px;}
+.scheme-stack{position:absolute;bottom:0;right:0;width:100%;display:flex;align-items:flex-end;gap:10px;padding-bottom:0;}
+.scheme-slip{
+  flex:1;
+  background:rgba(255,255,255,0.05);
+  border:1px solid rgba(255,255,255,0.12);
+  border-bottom:none;
+  border-radius:12px 12px 0 0;
+  padding:16px 14px 20px;
+  transition:transform .2s,background .2s;
+  cursor:pointer;
+}
+.scheme-slip:hover{background:rgba(255,255,255,0.09);transform:translateY(-8px);}
+.slip-icon{
+  width:32px;height:32px;border-radius:8px;
+  background:rgba(212,132,26,0.18);
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:10px;
+}
+.slip-icon svg{display:block;}
+.slip-name{font-size:11px;font-weight:600;color:rgba(255,255,255,0.5);letter-spacing:0.3px;margin-bottom:4px;}
+.slip-rate{font-size:18px;font-weight:700;color:var(--safMid);}
+.slip-rate small{font-size:10px;font-weight:500;color:rgba(255,255,255,0.3);margin-left:2px;}
+.slip-max{font-size:10px;color:rgba(255,255,255,0.35);margin-top:4px;}
+
+/* ── SECTION COMMON ── */
+.section{max-width:1160px;margin:0 auto;padding:72px 40px;}
+.section-label{
+  font-size:11px;font-weight:600;color:var(--saffron);letter-spacing:1px;
+  text-transform:uppercase;margin-bottom:12px;
+}
+.section-h{font-family:'DM Serif Display',Georgia,serif;font-size:clamp(28px,3.5vw,42px);color:var(--navy);line-height:1.15;letter-spacing:-0.3px;}
+.section-sub{font-size:16px;color:var(--stone);line-height:1.65;max-width:520px;margin-top:12px;}
+
+/* ── APP CARDS ── */
+.apps-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:40px;}
+.app-card{
+  border-radius:16px;overflow:hidden;
+  border:1px solid var(--line);
+  background:var(--card);
+  display:flex;flex-direction:column;
+  transition:box-shadow .2s,border-color .2s;
+}
+.app-card:hover{box-shadow:0 16px 40px rgba(13,27,42,0.10);border-color:var(--saffron);}
+.app-card.dark{background:var(--navy);border-color:transparent;}
+.app-card-header{padding:28px 28px 0;}
+.app-card-tag{font-size:10px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:var(--saffron);margin-bottom:8px;}
+.app-card.dark .app-card-tag{color:#5B9BFF;}
+.app-card h3{font-family:'DM Serif Display',Georgia,serif;font-size:26px;color:var(--navy);line-height:1.2;}
+.app-card.dark h3{color:#fff;}
+.app-card-desc{font-size:13.5px;color:var(--stone);margin-top:8px;line-height:1.55;max-width:400px;}
+.app-card.dark .app-card-desc{color:rgba(255,255,255,0.45);}
+
+.app-card-illus{
+  margin:24px 28px;
+  border-radius:10px;
+  background:var(--cream);
+  border:1px solid var(--line2);
+  overflow:hidden;
+  height:160px;
+  display:flex;align-items:center;justify-content:center;
+}
+.app-card.dark .app-card-illus{background:rgba(255,255,255,0.04);border-color:rgba(255,255,255,0.08);}
+
+.app-card-chips{display:flex;flex-wrap:wrap;gap:6px;padding:0 28px 4px;}
+.chip{
+  font-size:11px;font-weight:600;padding:4px 10px;border-radius:999px;
+  background:var(--safSoft);color:#8B5E0A;
+}
+.app-card.dark .chip{background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.6);}
+
+.app-card-footer{padding:20px 28px 28px;margin-top:auto;}
+.app-card-cta{
+  display:inline-flex;align-items:center;gap:8px;
+  height:44px;padding:0 20px;border-radius:10px;border:none;
+  background:var(--navy);color:#fff;
+  font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;
+  transition:background .15s;
+}
+.app-card-cta:hover{background:var(--navy2);}
+.app-card.dark .app-card-cta{background:var(--saffron);color:#fff;}
+.app-card.dark .app-card-cta:hover{background:#B8700F;}
+
+/* ── SCHEME GRID ── */
+.schemes-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:36px;}
+.scheme-card{
+  padding:20px;border-radius:14px;
+  background:var(--card);border:1px solid var(--line);
+  transition:box-shadow .15s,border-color .15s,transform .15s;
+  cursor:pointer;display:block;color:inherit;
+}
+.scheme-card:hover{transform:translateY(-3px);box-shadow:0 12px 28px rgba(13,27,42,0.08);border-color:var(--saffron);}
+.scheme-icon{
+  width:36px;height:36px;border-radius:9px;
+  background:var(--safSoft);border:1px solid rgba(212,132,26,0.2);
+  display:flex;align-items:center;justify-content:center;margin-bottom:14px;
+}
+.scheme-name{font-size:14px;font-weight:700;color:var(--navy);margin-bottom:6px;}
+.scheme-rate{font-family:'DM Serif Display',Georgia,serif;font-size:22px;color:var(--saffron);letter-spacing:-0.3px;}
+.scheme-rate small{font-size:11px;font-family:'Inter',sans-serif;font-weight:500;color:var(--stone2);margin-left:3px;}
+.scheme-desc{font-size:11.5px;color:var(--stone);margin-top:6px;line-height:1.45;}
+
+/* ── FOOTER ── */
+footer{
+  background:var(--navy);
+  padding:32px 40px;
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;
+}
+.ftr-copy{font-size:12px;color:rgba(255,255,255,0.35);}
+.ftr-links{display:flex;gap:24px;}
+.ftr-links a{font-size:12px;color:rgba(255,255,255,0.5);font-weight:500;transition:color .15s;}
+.ftr-links a:hover{color:#fff;}
+.ftr-brand{font-size:11px;color:rgba(255,255,255,0.3);font-weight:600;letter-spacing:0.5px;}
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px){
+  nav{padding:0 20px;}
+  .nav-links{display:none;}
+  .hero{padding:48px 20px 0;}
+  .hero-grid{grid-template-columns:1fr;gap:0;}
+  .hero-right{display:none;}
+  .hero-left{padding-bottom:48px;}
+  .section{padding:48px 20px;}
+  .apps-grid{grid-template-columns:1fr;}
+  .schemes-grid{grid-template-columns:1fr 1fr;}
+  footer{padding:24px 20px;}
+}
+@media(max-width:560px){
+  .schemes-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav>
+  <div class="nav-brand">
+    <div>
+      <div class="nav-name">Sahayog LOS</div>
+      <div class="nav-sub">Loan Origination System</div>
+    </div>
+  </div>
+  <div class="nav-links">
+    <a href="#apps">Workspaces</a>
+    <a href="#schemes">Schemes</a>
+    <a href="staff.html">Staff LOS</a>
+  </div>
+  <div class="nav-btns">
+    <select id="idx-country" aria-label="Country" style="height:34px;padding:0 10px;border-radius:8px;border:1px solid rgba(255,255,255,0.2);background:transparent;color:rgba(255,255,255,0.8);font-family:inherit;font-size:12px;cursor:pointer;">
+    </select>
+    <button class="btn-ghost" onclick="location.href='customer.html'">Apply for a loan</button>
+    <button class="btn-saffron" onclick="location.href='staff.html'">Staff login →</button>
+  </div>
+</nav>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="hero-rule"></div>
+  <div class="hero-grid">
+    <div class="hero-left">
+      <div class="hero-eyebrow"><span></span>Cooperative Banking · India</div>
+      <h1 class="hero-h1">Credit that moves<br/>at <em>people's pace.</em></h1>
+      <p class="hero-body">
+        A full loan origination system for cooperative and rural banks — from first contact through sanction and CBS disbursal.
+        Paperless KYC, live bureau checks, maker-checker controls.
+      </p>
+      <div class="hero-btns">
+        <button class="btn-primary" onclick="location.href='customer.html'">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg>
+          Customer portal
+        </button>
+        <button class="btn-outline" onclick="location.href='staff.html'">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+          Bank
+        </button>
+      </div>
+      <div class="hero-stats">
+        <div class="stat-item">
+          <div class="stat-num">6</div>
+          <div class="stat-lbl">Loan schemes</div>
+        </div>
+        <div class="stat-item" style="padding-left:24px;">
+          <div class="stat-num">7</div>
+          <div class="stat-lbl">KYC steps</div>
+        </div>
+        <div class="stat-item" style="padding-left:24px;">
+          <div class="stat-num">4</div>
+          <div class="stat-lbl">Languages</div>
+        </div>
+        <div class="stat-item" style="padding-left:24px;">
+          <div class="stat-num">∞</div>
+          <div class="stat-lbl">Tenants</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-right">
+      <div class="scheme-stack">
+        <!-- Gold -->
+        <a class="scheme-slip" href="customer.html?scheme=gold">
+          <div class="slip-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#D4841A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M5.6 18.4l2.8-2.8M15.6 8.4l2.8-2.8"/></svg>
+          </div>
+          <div class="slip-name">Gold</div>
+          <div class="slip-rate">8.50<small>%</small></div>
+          <div class="slip-max">upto <span class="cur-amt" data-amt="2500000">₹25 L</span></div>
+        </a>
+        <!-- Personal -->
+        <a class="scheme-slip" href="customer.html?scheme=personal">
+          <div class="slip-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#D4841A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg>
+          </div>
+          <div class="slip-name">Personal</div>
+          <div class="slip-rate">11.25<small>%</small></div>
+          <div class="slip-max">upto <span class="cur-amt" data-amt="1000000">₹10 L</span></div>
+        </a>
+        <!-- MSME -->
+        <a class="scheme-slip" href="customer.html?scheme=msme">
+          <div class="slip-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#D4841A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8l1-4h14l1 4"/><path d="M4 8v12h16V8"/><path d="M9 20v-6h6v6"/></svg>
+          </div>
+          <div class="slip-name">MSME</div>
+          <div class="slip-rate">10.75<small>%</small></div>
+          <div class="slip-max">upto <span class="cur-amt" data-amt="5000000">₹50 L</span></div>
+        </a>
+        <!-- Housing -->
+        <a class="scheme-slip" href="customer.html?scheme=housing">
+          <div class="slip-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#D4841A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-7 8 7v9H4z"/></svg>
+          </div>
+          <div class="slip-name">Housing</div>
+          <div class="slip-rate">9.15<small>%</small></div>
+          <div class="slip-max">upto <span class="cur-amt" data-amt="7500000">₹75 L</span></div>
+        </a>
+        <!-- LAP -->
+        <a class="scheme-slip" href="customer.html?scheme=lap">
+          <div class="slip-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#D4841A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/></svg>
+          </div>
+          <div class="slip-name">LAP</div>
+          <div class="slip-rate">9.75<small>%</small></div>
+          <div class="slip-max">upto <span class="cur-amt" data-amt="5000000">₹50 L</span></div>
+        </a>
+        <!-- Vehicle -->
+        <a class="scheme-slip" href="customer.html?scheme=vehicle">
+          <div class="slip-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#D4841A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 16l2-6h10l2 6"/><circle cx="8" cy="17" r="1.5"/><circle cx="16" cy="17" r="1.5"/><path d="M4 16h16v2H4z"/></svg>
+          </div>
+          <div class="slip-name">Vehicle</div>
+          <div class="slip-rate">9.50<small>%</small></div>
+          <div class="slip-max">upto <span class="cur-amt" data-amt="1500000">₹15 L</span></div>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── APPS ── -->
+<section id="apps">
+  <div class="section">
+    <div class="section-label">Workspaces</div>
+    <h2 class="section-h">Two apps, one workflow.</h2>
+    <p class="section-sub">The customer portal handles the journey from discovery to submission. The staff LOS takes it from pipeline through sanction and disbursal.</p>
+
+    <div class="apps-grid">
+      <!-- Customer portal card -->
+      <div class="app-card">
+        <div class="app-card-header">
+          <div class="app-card-tag">Customer portal</div>
+          <h3>Apply from anywhere.</h3>
+          <p class="app-card-desc">A 7-step guided journey — phone OTP, scheme selection, Aadhaar eKYC, DigiLocker, live EMI calculator, document upload, and a real-time status timeline.</p>
+        </div>
+        <div class="app-card-illus">
+          <!-- Styled illustration of the customer flow steps -->
+          <svg width="90%" height="80%" viewBox="0 0 280 140" aria-hidden="true">
+            <!-- Step progress bar -->
+            <rect x="16" y="16" width="248" height="4" rx="2" fill="#E4DDD4"/>
+            <rect x="16" y="16" width="140" height="4" rx="2" fill="#D4841A"/>
+            <!-- Step indicators -->
+            <circle cx="16" cy="18" r="5" fill="#D4841A"/>
+            <circle cx="51" cy="18" r="5" fill="#D4841A"/>
+            <circle cx="86" cy="18" r="5" fill="#D4841A"/>
+            <circle cx="121" cy="18" r="5" fill="#D4841A"/>
+            <circle cx="156" cy="18" r="5" fill="#D4841A"/>
+            <circle cx="191" cy="18" r="5" fill="#E4DDD4"/>
+            <circle cx="226" cy="18" r="5" fill="#E4DDD4"/>
+            <circle cx="264" cy="18" r="5" fill="#E4DDD4"/>
+            <!-- Scheme picker card -->
+            <rect x="16" y="36" width="76" height="88" rx="8" fill="#FBF7F0" stroke="#E4DDD4" stroke-width="0.5"/>
+            <rect x="24" y="48" width="20" height="20" rx="5" fill="#FDF3E3"/>
+            <rect x="24" y="74" width="40" height="4" rx="2" fill="#1C1410"/>
+            <rect x="24" y="82" width="28" height="8" rx="2" fill="#D4841A"/>
+            <rect x="24" y="94" width="48" height="3" rx="1.5" fill="#E4DDD4"/>
+            <rect x="24" y="101" width="36" height="3" rx="1.5" fill="#E4DDD4"/>
+            <!-- KYC card -->
+            <rect x="101" y="36" width="76" height="88" rx="8" fill="#FBF7F0" stroke="#E4DDD4" stroke-width="0.5"/>
+            <circle cx="139" cy="62" r="14" fill="#E4DDD4" stroke="#FBF7F0" stroke-width="1"/>
+            <rect x="119" y="82" width="40" height="4" rx="2" fill="#1C1410"/>
+            <rect x="119" y="90" width="36" height="3" rx="1.5" fill="#E4DDD4"/>
+            <rect x="119" y="100" width="48" height="6" rx="3" fill="#D4841A"/>
+            <!-- Status card -->
+            <rect x="186" y="36" width="78" height="88" rx="8" fill="#FBF7F0" stroke="#E4DDD4" stroke-width="0.5"/>
+            <rect x="194" y="48" width="48" height="3" rx="1.5" fill="#1C1410"/>
+            <rect x="194" y="58" width="8" height="8" rx="4" fill="#1A7A4E"/>
+            <rect x="206" y="60" width="36" height="3" rx="1.5" fill="#E4DDD4"/>
+            <rect x="194" y="72" width="8" height="8" rx="4" fill="#1A7A4E"/>
+            <rect x="206" y="74" width="28" height="3" rx="1.5" fill="#E4DDD4"/>
+            <rect x="194" y="86" width="8" height="8" rx="4" fill="#D4841A"/>
+            <rect x="206" y="88" width="36" height="3" rx="1.5" fill="#E4DDD4"/>
+            <rect x="194" y="100" width="8" height="8" rx="4" fill="#E4DDD4" stroke="#D4DDD4" stroke-width="0.5"/>
+            <rect x="206" y="102" width="28" height="3" rx="1.5" fill="#E4DDD4"/>
+          </svg>
+        </div>
+        <div class="app-card-chips">
+          <span class="chip">Aadhaar eKYC</span>
+          <span class="chip">DigiLocker</span>
+          <span class="chip">Live EMI</span>
+          <span class="chip">4 languages</span>
+          <span class="chip">Status timeline</span>
+        </div>
+        <div class="app-card-footer">
+          <button class="app-card-cta" onclick="location.href='customer.html'">
+            Open customer portal
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Staff LOS card -->
+      <div class="app-card dark">
+        <div class="app-card-header">
+          <div class="app-card-tag">Bank</div>
+          <h3>Pipeline to disbursal.</h3>
+          <p class="app-card-desc">KPI dashboard, application detail with composite credit score, maker-checker or committee sanction workflow, and CBS live or NEFT file-generation disbursal.</p>
+        </div>
+        <div class="app-card-illus">
+          <svg width="90%" height="80%" viewBox="0 0 280 140" aria-hidden="true">
+            <!-- Left rail (nav) -->
+            <rect x="0" y="0" width="44" height="140" rx="0" fill="#162434"/>
+            <rect x="10" y="12" width="24" height="5" rx="2.5" fill="#D4841A"/>
+            <rect x="10" y="24" width="24" height="3" rx="1.5" fill="rgba(255,255,255,0.15)"/>
+            <rect x="10" y="32" width="18" height="3" rx="1.5" fill="rgba(255,255,255,0.25)"/>
+            <rect x="10" y="40" width="22" height="3" rx="1.5" fill="rgba(255,255,255,0.15)"/>
+            <rect x="10" y="48" width="16" height="3" rx="1.5" fill="rgba(255,255,255,0.15)"/>
+            <!-- KPI strip -->
+            <rect x="52" y="10" width="54" height="28" rx="5" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.08)" stroke-width="0.5"/>
+            <rect x="58" y="16" width="30" height="2.5" rx="1.25" fill="rgba(255,255,255,0.25)"/>
+            <rect x="58" y="22" width="36" height="7" rx="2" fill="#fff"/>
+            <rect x="114" y="10" width="54" height="28" rx="5" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.08)" stroke-width="0.5"/>
+            <rect x="120" y="16" width="28" height="2.5" rx="1.25" fill="rgba(255,255,255,0.25)"/>
+            <rect x="120" y="22" width="30" height="7" rx="2" fill="#D4841A"/>
+            <rect x="176" y="10" width="54" height="28" rx="5" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.08)" stroke-width="0.5"/>
+            <rect x="182" y="16" width="32" height="2.5" rx="1.25" fill="rgba(255,255,255,0.25)"/>
+            <rect x="182" y="22" width="34" height="7" rx="2" fill="#fff"/>
+            <!-- Table rows -->
+            <rect x="52" y="46" width="178" height="11" rx="3" fill="rgba(255,255,255,0.04)"/>
+            <rect x="58" y="50" width="60" height="3" rx="1.5" fill="rgba(255,255,255,0.3)"/>
+            <rect x="170" y="49" width="30" height="5" rx="2.5" fill="rgba(26,122,78,0.4)"/>
+            <rect x="52" y="60" width="178" height="11" rx="3" fill="rgba(255,255,255,0.02)"/>
+            <rect x="58" y="64" width="50" height="3" rx="1.5" fill="rgba(255,255,255,0.2)"/>
+            <rect x="170" y="63" width="30" height="5" rx="2.5" fill="rgba(212,132,26,0.4)"/>
+            <rect x="52" y="74" width="178" height="11" rx="3" fill="rgba(255,255,255,0.04)"/>
+            <rect x="58" y="78" width="70" height="3" rx="1.5" fill="rgba(255,255,255,0.2)"/>
+            <rect x="170" y="77" width="30" height="5" rx="2.5" fill="rgba(26,122,78,0.4)"/>
+            <!-- Score donut -->
+            <circle cx="141" cy="112" r="18" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="5"/>
+            <circle cx="141" cy="112" r="18" fill="none" stroke="#D4841A" stroke-width="5" stroke-dasharray="82 31" stroke-dashoffset="28"/>
+            <rect x="133" y="109" width="16" height="6" rx="2" fill="#fff"/>
+            <!-- Policy checks -->
+            <rect x="168" y="96" width="62" height="8" rx="3" fill="rgba(255,255,255,0.04)"/>
+            <circle cx="175" cy="100" r="3" fill="rgba(26,122,78,0.7)"/>
+            <rect x="181" y="98" width="36" height="3" rx="1.5" fill="rgba(255,255,255,0.25)"/>
+            <rect x="168" y="108" width="62" height="8" rx="3" fill="rgba(255,255,255,0.04)"/>
+            <circle cx="175" cy="112" r="3" fill="rgba(26,122,78,0.7)"/>
+            <rect x="181" y="110" width="28" height="3" rx="1.5" fill="rgba(255,255,255,0.25)"/>
+            <rect x="168" y="120" width="62" height="8" rx="3" fill="rgba(255,255,255,0.04)"/>
+            <circle cx="175" cy="124" r="3" fill="rgba(212,132,26,0.7)"/>
+            <rect x="181" y="122" width="42" height="3" rx="1.5" fill="rgba(255,255,255,0.2)"/>
+          </svg>
+        </div>
+        <div class="app-card-chips">
+          <span class="chip">Pipeline</span>
+          <span class="chip">Maker-checker</span>
+          <span class="chip">Credit score</span>
+          <span class="chip">Sanction</span>
+          <span class="chip">CBS / NEFT</span>
+        </div>
+        <div class="app-card-footer">
+          <button class="app-card-cta" onclick="location.href='staff.html'">
+            Open staff LOS
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── SCHEMES ── -->
+<section id="schemes" style="background:#fff;border-top:1px solid var(--line);">
+  <div class="section">
+    <div class="section-label">Schemes in scope</div>
+    <h2 class="section-h">Six products, one system.</h2>
+    <p class="section-sub">Every scheme is fully configured — rates, LTV, tenure limits, required documents, and CBS integration paths.</p>
+
+    <div class="schemes-grid">
+      <a class="scheme-card" href="customer.html?scheme=gold">
+        <div class="scheme-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#D4841A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M5.6 18.4l2.8-2.8M15.6 8.4l2.8-2.8"/></svg>
+        </div>
+        <div class="scheme-name">Gold loan</div>
+        <div class="scheme-rate">8.50%<small>p.a.</small></div>
+        <div class="scheme-desc">Against gold ornaments &amp; coins · upto <span class="cur-amt" data-amt="2500000">₹25 L</span> · 75% LTV</div>
+      </a>
+      <a class="scheme-card" href="customer.html?scheme=personal">
+        <div class="scheme-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#D4841A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg>
+        </div>
+        <div class="scheme-name">Personal loan</div>
+        <div class="scheme-rate">11.25%<small>p.a.</small></div>
+        <div class="scheme-desc">Unsecured · upto <span class="cur-amt" data-amt="1000000">₹10 L</span> · 60 month tenure</div>
+      </a>
+      <a class="scheme-card" href="customer.html?scheme=msme">
+        <div class="scheme-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#D4841A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8l1-4h14l1 4"/><path d="M4 8v12h16V8"/><path d="M9 20v-6h6v6"/></svg>
+        </div>
+        <div class="scheme-name">MSME loan</div>
+        <div class="scheme-rate">10.75%<small>p.a.</small></div>
+        <div class="scheme-desc">Working capital · CGTMSE eligible · upto <span class="cur-amt" data-amt="5000000">₹50 L</span></div>
+      </a>
+      <a class="scheme-card" href="customer.html?scheme=housing">
+        <div class="scheme-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#D4841A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-7 8 7v9H4z"/></svg>
+        </div>
+        <div class="scheme-name">Housing loan</div>
+        <div class="scheme-rate">9.15%<small>p.a.</small></div>
+        <div class="scheme-desc">Upto <span class="cur-amt" data-amt="7500000">₹75 L</span> · 20 yr tenure · CERSAI registered</div>
+      </a>
+      <a class="scheme-card" href="customer.html?scheme=lap">
+        <div class="scheme-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#D4841A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/></svg>
+        </div>
+        <div class="scheme-name">Loan against property</div>
+        <div class="scheme-rate">9.75%<small>p.a.</small></div>
+        <div class="scheme-desc">Mortgage existing property · upto <span class="cur-amt" data-amt="5000000">₹50 L</span> · 60% LTV · 15 yr</div>
+      </a>
+      <a class="scheme-card" href="customer.html?scheme=vehicle">
+        <div class="scheme-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#D4841A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 16l2-6h10l2 6"/><circle cx="8" cy="17" r="1.5"/><circle cx="16" cy="17" r="1.5"/><path d="M4 16h16v2H4z"/></svg>
+        </div>
+        <div class="scheme-name">Vehicle loan</div>
+        <div class="scheme-rate">9.50%<small>p.a.</small></div>
+        <div class="scheme-desc">New &amp; used · upto <span class="cur-amt" data-amt="1500000">₹15 L</span> · 7 yr tenure</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="ftr-copy">© 2026 Sahayog LOS · Demo build · Not for production</div>
+  <div class="ftr-links">
+    <a href="customer.html">Customer portal</a>
+    <a href="staff.html">Staff LOS</a>
+  </div>
+  <div class="ftr-brand">Powered by QUBITCS</div>
+</footer>
+
+<script>
+// Region / currency switch — single global switch for this landing page
+// (there's no per-visitor session here), so picking a country re-symbols
+// every rupee figure on the page. Demo numbers are unchanged, only the
+// currency symbol/format is swapped — same pattern used in staff.html.
+(function () {
+  var CURRENCY_BY_COUNTRY = {
+    IN: { name: 'India', code: 'INR', symbol: '₹', locale: 'en-IN', lakhCr: true },
+    US: { name: 'United States', code: 'USD', symbol: '$', locale: 'en-US' },
+    GB: { name: 'United Kingdom', code: 'GBP', symbol: '£', locale: 'en-US' },
+    CA: { name: 'Canada', code: 'CAD', symbol: 'C$', locale: 'en-US' },
+    AU: { name: 'Australia', code: 'AUD', symbol: 'A$', locale: 'en-US' },
+    AE: { name: 'United Arab Emirates', code: 'AED', symbol: 'AED ', locale: 'en-US' },
+    SG: { name: 'Singapore', code: 'SGD', symbol: 'S$', locale: 'en-US' },
+    SA: { name: 'Saudi Arabia', code: 'SAR', symbol: 'SAR ', locale: 'en-US' },
+    ZA: { name: 'South Africa', code: 'ZAR', symbol: 'R', locale: 'en-US' },
+    NG: { name: 'Nigeria', code: 'NGN', symbol: '₦', locale: 'en-US' },
+    KE: { name: 'Kenya', code: 'KES', symbol: 'KSh ', locale: 'en-US' },
+    GH: { name: 'Ghana', code: 'GHS', symbol: 'GH₵', locale: 'en-US' },
+    EG: { name: 'Egypt', code: 'EGP', symbol: 'E£', locale: 'en-US' },
+    TZ: { name: 'Tanzania', code: 'TZS', symbol: 'TSh ', locale: 'en-US' },
+    MY: { name: 'Malaysia', code: 'MYR', symbol: 'RM', locale: 'en-US' },
+    NP: { name: 'Nepal', code: 'NPR', symbol: 'Rs ', locale: 'en-US' },
+    BD: { name: 'Bangladesh', code: 'BDT', symbol: '৳', locale: 'en-US' },
+    LK: { name: 'Sri Lanka', code: 'LKR', symbol: 'Rs ', locale: 'en-US' },
+    PK: { name: 'Pakistan', code: 'PKR', symbol: 'Rs ', locale: 'en-US' },
+    DE: { name: 'Germany', code: 'EUR', symbol: '€', locale: 'en-US' },
+    FR: { name: 'France', code: 'EUR', symbol: '€', locale: 'en-US' },
+    BR: { name: 'Brazil', code: 'BRL', symbol: 'R$', locale: 'en-US' },
+    MX: { name: 'Mexico', code: 'MXN', symbol: '$', locale: 'en-US' },
+    NZ: { name: 'New Zealand', code: 'NZD', symbol: 'NZ$', locale: 'en-US' }
+  };
+
+  function fmtMoney(amount, cur) {
+    var n = Math.round(amount);
+    var abs = Math.abs(n);
+    if (cur.lakhCr) {
+      if (abs >= 10000000) return cur.symbol + (n / 10000000).toFixed(2) + ' Cr';
+      if (abs >= 100000) return cur.symbol + (n / 100000).toFixed(2) + ' L';
+      return cur.symbol + n.toLocaleString(cur.locale);
+    }
+    if (abs >= 1000000) return cur.symbol + (n / 1000000).toFixed(2) + 'M';
+    if (abs >= 1000) return cur.symbol + n.toLocaleString(cur.locale);
+    return cur.symbol + n.toLocaleString(cur.locale);
+  }
+
+  function applyCurrency(code) {
+    var cur = CURRENCY_BY_COUNTRY[code] || CURRENCY_BY_COUNTRY.IN;
+    var els = document.querySelectorAll('.cur-amt');
+    for (var i = 0; i < els.length; i++) {
+      var amt = Number(els[i].getAttribute('data-amt'));
+      els[i].textContent = fmtMoney(amt, cur);
+    }
+  }
+
+  var select = document.getElementById('idx-country');
+  if (select) {
+    Object.keys(CURRENCY_BY_COUNTRY).forEach(function (code) {
+      var opt = document.createElement('option');
+      opt.value = code;
+      opt.textContent = CURRENCY_BY_COUNTRY[code].name;
+      select.appendChild(opt);
+    });
+    select.value = 'IN';
+    select.addEventListener('change', function (e) {
+      applyCurrency(e.target.value);
+    });
+  }
+})();
+</script>
+
+</body>
+</html>

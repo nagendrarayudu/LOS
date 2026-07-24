@@ -1,0 +1,75 @@
+:root {
+  --navy: #1b3a6b;
+  --navy2: #2a4d7f;
+  --navy3: #3a5f8f;
+  --saffron: #10b981;
+  --saf-soft: #ecfdf5;
+  --saf-mid: #6ee7b7;
+  --cream: #fbf7f0;
+  --cream-d: #f0eae0;
+  --stone: #6b7280;
+  --stone2: #9ca3af;
+  --ink: #1f2937;
+  --card: #ffffff;
+  --line: #e5e7eb;
+  --line2: #f3f4f6;
+  --green: #10b981;
+  --green-soft: #ecfdf5;
+  --fail: #ef4444;
+  --amber: #d4841a;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  background: var(--cream);
+  color: var(--ink);
+  font-family: 'Inter', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.4;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+.serif {
+  font-family: 'DM Serif Display', Georgia, serif;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(15, 30, 55, 0.18);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
