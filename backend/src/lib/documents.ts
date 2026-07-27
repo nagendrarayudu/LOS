@@ -14,7 +14,8 @@ export type DocDefinition = { id: string; label: string; hint: string; tag: DocT
 export const DOC_LIBRARY: Record<string, DocDefinition> = {
   photo: { id: "photo", label: "Passport-size photograph", hint: "Recent, white background", tag: "identity" },
   pan: { id: "pan", label: "PAN card", hint: "Permanent Account Number", tag: "identity" },
-  aadhaar: { id: "aadhaar", label: "Aadhaar card", hint: "Front & back, or eKYC", tag: "identity" },
+  aadhaar: { id: "aadhaar", label: "Aadhaar card — front", hint: "Or scan the QR code during eKYC", tag: "identity" },
+  aadhaar_back: { id: "aadhaar_back", label: "Aadhaar card — back", hint: "Shows your address", tag: "identity" },
   address_proof: { id: "address_proof", label: "Address proof", hint: "Utility bill or rent agreement, < 3 months old", tag: "identity" },
   salary_slip: { id: "salary_slip", label: "Salary slips", hint: "Last 3 months", tag: "income" },
   bank_statement: { id: "bank_statement", label: "Bank statement", hint: "Last 6 months", tag: "income" },
@@ -48,30 +49,30 @@ export type SchemeDocRequirement = { required: string[]; optional: string[] };
 
 export const SCHEME_DOCS: Record<string, Record<ApplicantType, SchemeDocRequirement>> = {
   gold: {
-    INDIVIDUAL: { required: ["photo", "pan", "aadhaar", "gold_appraisal", "gold_photo"], optional: ["address_proof"] },
-    ENTERPRISE: { required: ["photo", "pan", "aadhaar", "gold_appraisal", "gold_photo", "biz_pan"], optional: ["gst"] },
+    INDIVIDUAL: { required: ["photo", "pan", "aadhaar", "aadhaar_back", "gold_appraisal", "gold_photo"], optional: ["address_proof"] },
+    ENTERPRISE: { required: ["photo", "pan", "aadhaar", "aadhaar_back", "gold_appraisal", "gold_photo", "biz_pan"], optional: ["gst"] },
   },
   personal: {
-    INDIVIDUAL: { required: ["photo", "pan", "aadhaar", "salary_slip", "bank_statement"], optional: ["form16", "itr", "employment_letter"] },
-    ENTERPRISE: { required: ["photo", "pan", "aadhaar", "bank_statement", "itr"], optional: ["gst"] },
+    INDIVIDUAL: { required: ["photo", "pan", "aadhaar", "aadhaar_back", "salary_slip", "bank_statement"], optional: ["form16", "itr", "employment_letter"] },
+    ENTERPRISE: { required: ["photo", "pan", "aadhaar", "aadhaar_back", "bank_statement", "itr"], optional: ["gst"] },
   },
   msme: {
-    INDIVIDUAL: { required: ["photo", "pan", "aadhaar", "biz_pan", "gst", "bank_statement", "itr"], optional: ["udyam"] },
+    INDIVIDUAL: { required: ["photo", "pan", "aadhaar", "aadhaar_back", "biz_pan", "gst", "bank_statement", "itr"], optional: ["udyam"] },
     ENTERPRISE: {
       required: ["biz_pan", "coi_moa", "gst", "udyam", "audited_bs", "gst_returns", "biz_bank_statement", "board_resolution", "director_aadhaar", "director_pan"],
       optional: ["business_address_proof"],
     },
   },
   housing: {
-    INDIVIDUAL: { required: ["photo", "pan", "aadhaar", "salary_slip", "form16", "sale_deed", "ec", "approved_plan"], optional: ["itr", "property_valuation"] },
-    ENTERPRISE: { required: ["photo", "pan", "aadhaar", "biz_pan", "gst", "bank_statement", "sale_deed", "ec", "approved_plan"], optional: ["audited_bs"] },
+    INDIVIDUAL: { required: ["photo", "pan", "aadhaar", "aadhaar_back", "salary_slip", "form16", "sale_deed", "ec", "approved_plan"], optional: ["itr", "property_valuation"] },
+    ENTERPRISE: { required: ["photo", "pan", "aadhaar", "aadhaar_back", "biz_pan", "gst", "bank_statement", "sale_deed", "ec", "approved_plan"], optional: ["audited_bs"] },
   },
   lap: {
-    INDIVIDUAL: { required: ["photo", "pan", "aadhaar", "salary_slip", "bank_statement", "sale_deed", "ec", "property_valuation"], optional: ["itr", "form16"] },
+    INDIVIDUAL: { required: ["photo", "pan", "aadhaar", "aadhaar_back", "salary_slip", "bank_statement", "sale_deed", "ec", "property_valuation"], optional: ["itr", "form16"] },
     ENTERPRISE: { required: ["biz_pan", "gst", "audited_bs", "biz_bank_statement", "sale_deed", "ec", "property_valuation"], optional: ["board_resolution"] },
   },
   vehicle: {
-    INDIVIDUAL: { required: ["photo", "pan", "aadhaar", "salary_slip", "bank_statement", "vehicle_quotation"], optional: ["itr", "vehicle_rc"] },
-    ENTERPRISE: { required: ["photo", "pan", "aadhaar", "biz_pan", "gst", "bank_statement", "vehicle_quotation"], optional: ["vehicle_rc"] },
+    INDIVIDUAL: { required: ["photo", "pan", "aadhaar", "aadhaar_back", "salary_slip", "bank_statement", "vehicle_quotation"], optional: ["itr", "vehicle_rc"] },
+    ENTERPRISE: { required: ["photo", "pan", "aadhaar", "aadhaar_back", "biz_pan", "gst", "bank_statement", "vehicle_quotation"], optional: ["vehicle_rc"] },
   },
 };

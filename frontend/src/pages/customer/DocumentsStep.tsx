@@ -66,7 +66,7 @@ export function DocumentsStep({ applicationId, onDone, onBack }: Props) {
       <h1 className="cp-h1">Upload documents</h1>
       <p className="cp-sub">All required documents must be uploaded before you can continue.</p>
 
-      <input type="file" ref={fileInputRef} style={{ display: 'none' }} onChange={onFileChosen} accept="image/*,.pdf" />
+      <input type="file" ref={fileInputRef} style={{ display: 'none' }} onChange={onFileChosen} accept="image/*,.pdf" capture="environment" />
 
       {docs?.required.map((d) => (
         <div className="cp-doc-row" key={d.id}>

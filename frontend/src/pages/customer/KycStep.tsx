@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { apiRequest, ApiError } from '../../lib/api'
 import { useCustomerAuth } from './CustomerAuthContext'
+import { AadhaarScanner } from './AadhaarScanner'
+import type { AadhaarQrFields } from '../../lib/aadhaarQr'
 
 const DEMO_PROFILES: Record<string, { name: string; dob: string; gender: 'Male' | 'Female'; pan: string; aadhaar: string; city: string; state: string; pincode: string; occupation: string; employer: string; netIncome: number }> = {
   '999988887777': { name: 'Venkata Ramana Reddy', dob: '1981-06-14', gender: 'Male', pan: 'AXBPR4521K', aadhaar: '999988887777', city: 'Khammam', state: 'Telangana', pincode: '507001', occupation: 'Salaried', employer: 'Singareni Collieries (Govt)', netIncome: 62000 },
@@ -28,6 +30,26 @@ export function KycStep({ applicationId, onDone }: Props) {
   const [netIncome, setNetIncome] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
+  const [scanNote, setScanNote] = useState<string | null>(null)
+
+  function applyScannedFields(fields: AadhaarQrFields) {
+    if (fields.aadhaarNumber) setAadhaar(fields.aadhaarNumber)
+    if (fields.name) setName(fields.name)
+    if (fields.dob) setDob(fields.dob)
+    if (fields.gender) setGender(fields.gender)
+    if (fields.addressLine1) setAddressLine1(fields.addressLine1)
+    if (fields.city) setCity(fields.city)
+    if (fields.state) setStateVal(fields.state)
+    if (fields.pincode) setPincode(fields.pincode)
+
+    if (!fields.aadhaarNumber && fields.aadhaarLast4) {
+      setScanNote(
+        `Scanned — most fields filled in. Your card's QR only exposes the last 4 digits (••••${fields.aadhaarLast4}) per UIDAI's masking rules, so please type the full 12-digit Aadhaar number yourself.`
+      )
+    } else {
+      setScanNote('Scanned successfully — review the fields below before continuing.')
+    }
+  }
 
   function applyDemo(key: string) {
     const d = DEMO_PROFILES[key]
@@ -103,6 +125,9 @@ export function KycStep({ applicationId, onDone }: Props) {
           Sunitha Devi
         </button>
       </div>
+
+      <AadhaarScanner onScanned={applyScannedFields} />
+      {scanNote && <div className="cp-demo-hint">{scanNote}</div>}
 
       <div className="cp-field">
         <label className="cp-label">Aadhaar number</label>
