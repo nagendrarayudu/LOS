@@ -9,6 +9,7 @@ import { SCHEME_DOCS, DOC_LIBRARY } from "../lib/documents.js";
 import { generateApplicationNumber } from "../lib/applicationNumber.js";
 import { upload } from "../lib/upload.js";
 import { runCreditAssessment } from "../services/creditScore.js";
+import { getAadhaarEkycProvider } from "../services/aadhaarEkyc.js";
 
 export const customerApplicationsRouter = Router();
 customerApplicationsRouter.use(requireCustomer);
@@ -133,6 +134,79 @@ customerApplicationsRouter.put(
       },
     });
     res.json(customer);
+  })
+);
+
+// ── Aadhaar OTP-consent eKYC ──────────────────────────────
+// Mirrors the generate-otp / verify-otp pattern used by Aadhaar eKYC vendors (Signzy,
+// ScoreMe, etc). Which provider actually runs is chosen by AADHAAR_EKYC_PROVIDER in
+// backend/.env — "mock" (default) needs no credentials; a real vendor name requires
+// AADHAAR_EKYC_BASE_URL / AADHAAR_EKYC_API_KEY, see services/aadhaarEkyc.ts.
+
+const aadhaarOtpRequestSchema = z.object({
+  aadhaarNumber: z.string().regex(/^\d{12}$/, "Aadhaar must be 12 digits"),
+});
+
+customerApplicationsRouter.post(
+  "/:id/aadhaar-ekyc/otp",
+  asyncHandler(async (req, res) => {
+    const application = await loadOwnedApplication(req.params.id, req.customer!.sub);
+    if (application.status !== "DRAFT") throw new HttpError(400, "KYC can only be updated while application is a draft");
+    const { aadhaarNumber } = aadhaarOtpRequestSchema.parse(req.body);
+
+    const provider = getAadhaarEkycProvider();
+    const result = await provider.generateOtp(aadhaarNumber);
+
+    await prisma.aadhaarEkycChallenge.create({
+      data: {
+        applicationId: application.id,
+        aadhaarNumber,
+        provider: provider.name,
+        providerRef: result.providerRef,
+        otpHash: result.otpHash,
+        expiresAt: new Date(Date.now() + result.expiresInSeconds * 1000),
+      },
+    });
+
+    res.json({ providerRef: result.providerRef, demoOtp: result.demoOtp });
+  })
+);
+
+const aadhaarOtpVerifySchema = z.object({
+  providerRef: z.string(),
+  otp: z.string().min(4).max(8),
+});
+
+customerApplicationsRouter.post(
+  "/:id/aadhaar-ekyc/verify",
+  asyncHandler(async (req, res) => {
+    const application = await loadOwnedApplication(req.params.id, req.customer!.sub);
+    if (application.status !== "DRAFT") throw new HttpError(400, "KYC can only be updated while application is a draft");
+    const { providerRef, otp } = aadhaarOtpVerifySchema.parse(req.body);
+
+    const challenge = await prisma.aadhaarEkycChallenge.findFirst({
+      where: { applicationId: application.id, providerRef, verifiedAt: null },
+      orderBy: { createdAt: "desc" },
+    });
+    if (!challenge) throw new HttpError(400, "No eKYC OTP request found, please request a new one");
+    if (challenge.expiresAt < new Date()) throw new HttpError(400, "OTP expired, please request a new one");
+    if (challenge.attempts >= 5) throw new HttpError(429, "Too many attempts, please request a new OTP");
+
+    const provider = getAadhaarEkycProvider();
+    let demographics;
+    try {
+      demographics = await provider.verifyOtp(providerRef, otp, { otpHash: challenge.otpHash, aadhaarNumber: challenge.aadhaarNumber });
+    } catch (e) {
+      await prisma.aadhaarEkycChallenge.update({ where: { id: challenge.id }, data: { attempts: { increment: 1 } } });
+      throw new HttpError(401, e instanceof Error ? e.message : "OTP verification failed");
+    }
+
+    await prisma.aadhaarEkycChallenge.update({
+      where: { id: challenge.id },
+      data: { verifiedAt: new Date(), resultJson: demographics as never },
+    });
+
+    res.json(demographics);
   })
 );
 

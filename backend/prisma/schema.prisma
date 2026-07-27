@@ -96,6 +96,24 @@ model OtpChallenge {
   createdAt  DateTime  @default(now())
 }
 
+// Aadhaar OTP-consent eKYC (Signzy/ScoreMe-style: generate-otp -> verify-otp -> demographic data).
+// `provider` records which backend actually served the request so real vendor calls and the
+// local demo fallback are distinguishable in the data, not just in code.
+model AadhaarEkycChallenge {
+  id            String    @id @default(cuid())
+  applicationId String
+  application   LoanApplication @relation(fields: [applicationId], references: [id])
+  aadhaarNumber String
+  provider      String // mock | signzy | scoreme
+  providerRef   String // opaque reference/transaction id returned by generate-otp
+  otpHash       String? // only set for the mock provider, which owns its own OTP
+  attempts      Int       @default(0)
+  expiresAt     DateTime
+  verifiedAt    DateTime?
+  resultJson    Json? // demographic payload once verified
+  createdAt     DateTime  @default(now())
+}
+
 // ── Schemes ──────────────────────────────────────────────
 
 enum SchemeCategory {
@@ -191,6 +209,7 @@ model LoanApplication {
   policyChecks      PolicyCheck[]
   sanctionDecisions SanctionDecision[]
   disbursal         Disbursal?
+  aadhaarEkycChallenges AadhaarEkycChallenge[]
 }
 
 model ApplicationStatusEvent {

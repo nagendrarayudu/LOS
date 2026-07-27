@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { apiRequest, ApiError } from '../../lib/api'
 import { useCustomerAuth } from './CustomerAuthContext'
 import { AadhaarScanner } from './AadhaarScanner'
+import { AadhaarOtpVerify } from './AadhaarOtpVerify'
 import type { AadhaarQrFields } from '../../lib/aadhaarQr'
 
 const DEMO_PROFILES: Record<string, { name: string; dob: string; gender: 'Male' | 'Female'; pan: string; aadhaar: string; city: string; state: string; pincode: string; occupation: string; employer: string; netIncome: number }> = {
@@ -49,6 +50,25 @@ export function KycStep({ applicationId, onDone }: Props) {
     } else {
       setScanNote('Scanned successfully — review the fields below before continuing.')
     }
+  }
+
+  function applyOtpVerifiedFields(fields: {
+    name?: string
+    dob?: string
+    gender?: 'Male' | 'Female' | 'Other'
+    addressLine1?: string
+    city?: string
+    state?: string
+    pincode?: string
+  }) {
+    if (fields.name) setName(fields.name)
+    if (fields.dob) setDob(fields.dob)
+    if (fields.gender) setGender(fields.gender)
+    if (fields.addressLine1) setAddressLine1(fields.addressLine1)
+    if (fields.city) setCity(fields.city)
+    if (fields.state) setStateVal(fields.state)
+    if (fields.pincode) setPincode(fields.pincode)
+    setScanNote('OTP verified — details fetched and filled in below. Review before continuing.')
   }
 
   function applyDemo(key: string) {
@@ -114,7 +134,10 @@ export function KycStep({ applicationId, onDone }: Props) {
     <div>
       <div className="cp-step-label">Step 1 of 3 · KYC</div>
       <h1 className="cp-h1">Verify your identity</h1>
-      <p className="cp-sub">Enter Aadhaar &amp; PAN details for eKYC. This demo auto-fills from a sample UIDAI record.</p>
+      <p className="cp-sub">
+        Verify via Aadhaar OTP or QR scan below, or enter details manually. This demo build uses a synthetic eKYC
+        provider — no real UIDAI data is accessed.
+      </p>
 
       <div className="cp-demo-hint" style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
         ⚡ Demo — tap to auto-fill &amp; verify:
@@ -126,13 +149,18 @@ export function KycStep({ applicationId, onDone }: Props) {
         </button>
       </div>
 
-      <AadhaarScanner onScanned={applyScannedFields} />
-      {scanNote && <div className="cp-demo-hint">{scanNote}</div>}
-
       <div className="cp-field">
         <label className="cp-label">Aadhaar number</label>
         <input className="cp-input" inputMode="numeric" maxLength={12} value={aadhaar} onChange={(e) => setAadhaar(e.target.value.replace(/\D/g, '').slice(0, 12))} placeholder="12-digit Aadhaar number" />
       </div>
+
+      <AadhaarOtpVerify applicationId={applicationId} aadhaarNumber={aadhaar} onVerified={applyOtpVerifiedFields} />
+
+      <p className="cp-hint" style={{ margin: '4px 0 10px' }}>— or —</p>
+
+      <AadhaarScanner onScanned={applyScannedFields} />
+      {scanNote && <div className="cp-demo-hint">{scanNote}</div>}
+
       <div className="cp-field">
         <label className="cp-label">PAN number</label>
         <input className="cp-input" maxLength={10} value={pan} onChange={(e) => setPan(e.target.value.toUpperCase().slice(0, 10))} placeholder="ABCDE1234F" />
