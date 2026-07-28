@@ -114,6 +114,19 @@ model AadhaarEkycChallenge {
   createdAt     DateTime  @default(now())
 }
 
+// Signzy DigiLocker consent flow: createUrl -> customer completes consent on DigiLocker's
+// own site -> Signzy POSTs the result to our webhook, matched back here by requestId.
+model DigilockerRequest {
+  id            String    @id @default(cuid())
+  applicationId String
+  application   LoanApplication @relation(fields: [applicationId], references: [id])
+  requestId     String    @unique
+  status        String    @default("pending") // pending | success | failure
+  resultJson    Json?
+  createdAt     DateTime  @default(now())
+  completedAt   DateTime?
+}
+
 // ── Schemes ──────────────────────────────────────────────
 
 enum SchemeCategory {
@@ -210,6 +223,7 @@ model LoanApplication {
   sanctionDecisions SanctionDecision[]
   disbursal         Disbursal?
   aadhaarEkycChallenges AadhaarEkycChallenge[]
+  digilockerRequests    DigilockerRequest[]
 }
 
 model ApplicationStatusEvent {

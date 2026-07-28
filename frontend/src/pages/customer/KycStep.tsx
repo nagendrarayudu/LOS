@@ -3,6 +3,7 @@ import { apiRequest, ApiError } from '../../lib/api'
 import { useCustomerAuth } from './CustomerAuthContext'
 import { AadhaarScanner } from './AadhaarScanner'
 import { AadhaarOtpVerify } from './AadhaarOtpVerify'
+import { DigilockerVerify } from './DigilockerVerify'
 import type { AadhaarQrFields } from '../../lib/aadhaarQr'
 
 const DEMO_PROFILES: Record<string, { name: string; dob: string; gender: 'Male' | 'Female'; pan: string; aadhaar: string; city: string; state: string; pincode: string; occupation: string; employer: string; netIncome: number }> = {
@@ -69,6 +70,30 @@ export function KycStep({ applicationId, onDone }: Props) {
     if (fields.state) setStateVal(fields.state)
     if (fields.pincode) setPincode(fields.pincode)
     setScanNote('OTP verified — details fetched and filled in below. Review before continuing.')
+  }
+
+  function applyDigilockerFields(fields: {
+    name?: string
+    dob?: string
+    gender?: 'Male' | 'Female' | 'Other'
+    addressLine1?: string
+    city?: string
+    state?: string
+    pincode?: string
+    aadhaarLast4?: string
+  }) {
+    if (fields.name) setName(fields.name)
+    if (fields.dob) setDob(fields.dob)
+    if (fields.gender) setGender(fields.gender)
+    if (fields.addressLine1) setAddressLine1(fields.addressLine1)
+    if (fields.city) setCity(fields.city)
+    if (fields.state) setStateVal(fields.state)
+    if (fields.pincode) setPincode(fields.pincode)
+    setScanNote(
+      fields.aadhaarLast4
+        ? `DigiLocker verified — most fields filled in. DigiLocker only shares the last 4 digits (••••${fields.aadhaarLast4}), so please type the full 12-digit Aadhaar number yourself.`
+        : 'DigiLocker verified — details fetched and filled in below. Review before continuing.'
+    )
   }
 
   function applyDemo(key: string) {
@@ -155,6 +180,8 @@ export function KycStep({ applicationId, onDone }: Props) {
       </div>
 
       <AadhaarOtpVerify applicationId={applicationId} aadhaarNumber={aadhaar} onVerified={applyOtpVerifiedFields} />
+
+      <DigilockerVerify applicationId={applicationId} onVerified={applyDigilockerFields} />
 
       <p className="cp-hint" style={{ margin: '4px 0 10px' }}>— or —</p>
 
