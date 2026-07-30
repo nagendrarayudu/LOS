@@ -1,14 +1,17 @@
-import { Route, Routes, useNavigate } from 'react-router-dom'
+import { Route, Routes, useLocation, useNavigate } from 'react-router-dom'
 import { StaffAuthProvider, useStaffAuth, ROLE_LABEL } from './StaffAuthContext'
 import { StaffLogin } from './StaffLogin'
 import { Pipeline } from './Pipeline'
 import { ApplicationDetail } from './ApplicationDetail'
+import { Masters } from './Masters'
 import '../customer/CustomerPortal.css'
 import './StaffPortal.css'
 
 function Shell({ children }: { children: React.ReactNode }) {
   const auth = useStaffAuth()
   const navigate = useNavigate()
+  const location = useLocation()
+  const onMasters = location.pathname.startsWith('/staff/masters')
   return (
     <div className="sp">
       <aside className="sp-sidebar">
@@ -16,8 +19,11 @@ function Shell({ children }: { children: React.ReactNode }) {
           Sahyog LOS
           <span>Staff Portal</span>
         </div>
-        <div className="sp-nav-item active" onClick={() => navigate('/staff/applications')}>
+        <div className={`sp-nav-item ${onMasters ? '' : 'active'}`} onClick={() => navigate('/staff/applications')}>
           Pipeline
+        </div>
+        <div className={`sp-nav-item ${onMasters ? 'active' : ''}`} onClick={() => navigate('/staff/masters')}>
+          Masters
         </div>
         <div className="sp-sidebar-footer">
           <div className="sp-sidebar-user">{auth.staff?.name}</div>
@@ -41,6 +47,7 @@ function Gated() {
         <Route path="/" element={<Pipeline />} />
         <Route path="/applications" element={<Pipeline />} />
         <Route path="/applications/:id" element={<ApplicationDetail />} />
+        <Route path="/masters" element={<Masters />} />
       </Routes>
     </Shell>
   )

@@ -19,6 +19,9 @@ model Tenant {
   customers    Customer[]
   schemes      Scheme[]
   applications LoanApplication[]
+  loanParameter LoanParameter?
+  bankParameter BankParameter?
+  loanPolicy    LoanPolicy?
 }
 
 // ── Staff / auth ─────────────────────────────────────────
@@ -160,6 +163,58 @@ model Scheme {
   applications LoanApplication[]
 
   @@unique([tenantId, key])
+}
+
+// ── Masters / admin configuration ─────────────────────────
+// One row per tenant (singleton config), editable from the staff "Masters" console.
+// Wired into the actual engine (loanMath, sanctionRouting, creditScore policy checks)
+// rather than being purely decorative.
+
+model LoanParameter {
+  id                   String   @id @default(cuid())
+  tenantId             String   @unique
+  tenant               Tenant   @relation(fields: [tenantId], references: [id])
+  processingFeePercent Decimal  @db.Decimal(5, 2) // on principal, before GST
+  gstPercent           Decimal  @db.Decimal(5, 2) // GST on the processing fee
+  penalInterestPercent Decimal  @db.Decimal(5, 2) // p.a., on overdue EMI
+  foreclosurePercent   Decimal  @db.Decimal(5, 2) // on outstanding principal
+  bounceChargeAmount   Decimal  @db.Decimal(10, 2)
+  lateFeeAmount        Decimal  @db.Decimal(10, 2)
+  coolingOffDays       Int      @default(3) // RBI Digital Lending Directions look-up period
+  moratoriumMonths     Int      @default(0)
+  updatedAt            DateTime @updatedAt
+}
+
+model BankParameter {
+  id                    String   @id @default(cuid())
+  tenantId              String   @unique
+  tenant                Tenant   @relation(fields: [tenantId], references: [id])
+  bankName              String
+  cbsCode               String
+  ifscPrefix            String
+  baseRatePercent       Decimal  @db.Decimal(5, 2)
+  singleApproverCeiling Decimal  @db.Decimal(14, 2) // < this: single approver (branch manager)
+  makerCheckerCeiling   Decimal  @db.Decimal(14, 2) // < this: maker-checker; >= this: committee
+  committeeQuorum       Int
+  committeeSize         Int
+  neftCutoffTime        String // "16:30"
+  workingDays           String // "Mon–Sat"
+  updatedAt             DateTime @updatedAt
+}
+
+model LoanPolicy {
+  id                            String   @id @default(cuid())
+  tenantId                      String   @unique
+  tenant                        Tenant   @relation(fields: [tenantId], references: [id])
+  minAge                        Int
+  maxAge                        Int
+  maxDbrPercent                 Decimal  @db.Decimal(5, 2)
+  defaultMaxLtvPercent          Decimal  @db.Decimal(5, 2) // used when a scheme has no ltvPercent of its own
+  minCibilScore                 Int
+  minCompositeScoreAutoApprove  Int
+  requireKyc                    Boolean  @default(true)
+  blockActiveDefault            Boolean  @default(true)
+  updatedAt                     DateTime @updatedAt
 }
 
 // ── Applications ─────────────────────────────────────────

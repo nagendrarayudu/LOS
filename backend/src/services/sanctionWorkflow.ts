@@ -1,6 +1,7 @@
 import { prisma } from "../lib/prisma.js";
 import { HttpError } from "../middleware/errorHandler.js";
-import { sanctionTierFor, roleCanDecide, COMMITTEE_QUORUM, type SanctionTier } from "./sanctionRouting.js";
+import { sanctionTierFor, roleCanDecide, type SanctionTier } from "./sanctionRouting.js";
+import { getBankParameter } from "../lib/masters.js";
 import type { SanctionDecisionType, SanctionLevel } from "@prisma/client";
 
 export async function moveToReview(applicationId: string, actorId: string) {
@@ -49,7 +50,8 @@ export async function recordSanctionDecision(input: DecisionInput) {
     throw new HttpError(400, `Application is not awaiting a sanction decision (status ${application.status})`);
   }
 
-  const tier: SanctionTier = sanctionTierFor(Number(application.requestedAmount));
+  const bankParams = await getBankParameter(application.tenantId);
+  const tier: SanctionTier = sanctionTierFor(Number(application.requestedAmount), bankParams);
   if (!roleCanDecide(tier, input.level, input.staffRole)) {
     throw new HttpError(403, `Role ${input.staffRole} cannot record a ${input.level} decision at this sanction tier (${tier})`);
   }
@@ -112,13 +114,14 @@ export async function recordSanctionDecision(input: DecisionInput) {
     for (const d of decisions) byMember.set(d.decidedById, d.decision);
     const approveCount = [...byMember.values()].filter((d) => d === "APPROVED").length;
     const rejectCount = [...byMember.values()].filter((d) => d === "REJECTED").length;
+    const quorum = bankParams.committeeQuorum;
 
-    if (approveCount >= COMMITTEE_QUORUM) {
-      await finalize(application.id, "SANCTIONED", input.staffId, `Committee approved (${approveCount}/${COMMITTEE_QUORUM} quorum)`);
+    if (approveCount >= quorum) {
+      await finalize(application.id, "SANCTIONED", input.staffId, `Committee approved (${approveCount}/${quorum} quorum)`);
       return { status: "SANCTIONED" as const, tier, approveCount, rejectCount };
     }
-    if (rejectCount >= COMMITTEE_QUORUM) {
-      await finalize(application.id, "REJECTED", input.staffId, `Committee rejected (${rejectCount}/${COMMITTEE_QUORUM} quorum)`);
+    if (rejectCount >= quorum) {
+      await finalize(application.id, "REJECTED", input.staffId, `Committee rejected (${rejectCount}/${quorum} quorum)`);
       return { status: "REJECTED" as const, tier, approveCount, rejectCount };
     }
     return { status: application.status, tier, approveCount, rejectCount };

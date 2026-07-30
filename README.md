@@ -28,15 +28,38 @@ All of this runs against real Postgres tables — there is no mock/localStorage 
 running app. Six loan schemes (Gold, Personal, MSME, Housing, LAP, Vehicle) are seeded with
 real rates, tenure limits and document requirements.
 
+### Masters console
+
+Staff → **Masters** (any signed-in staff can view; only `ADMIN` can edit) covers:
+
+- **Products & schemes** — full CRUD on the six loan products (rate, amount/tenure range,
+  LTV, category, repayment type). Soft-deleted (deactivated), never hard-deleted, since past
+  applications reference them.
+- **Loan parameters** — processing fee %, GST %, penal interest, foreclosure charge, bounce/late
+  fees, cooling-off period, moratorium. Feeds directly into `repaymentSummary()` in
+  `backend/src/lib/loanMath.ts`, so editing the fee here changes the EMI/APR/processing-fee
+  shown to customers on their very next application.
+- **Bank parameters** — bank identity (name, CBS code, IFSC prefix), base rate, and the sanction
+  routing ceilings (single-approver / maker-checker / committee thresholds, committee quorum
+  & size). Drives `sanctionTierFor()` in `backend/src/services/sanctionRouting.ts`.
+- **Loan policy** — eligibility thresholds (age range, max DBR, default max LTV, min CIBIL,
+  min composite score for auto-approve, KYC/default-history requirements). Drives
+  `runPolicyChecks()` in `backend/src/services/creditScore.ts`.
+
+Each is a per-tenant singleton config row (`LoanParameter`, `BankParameter`, `LoanPolicy` in
+the Prisma schema), seeded with the same defaults the app used before these were configurable,
+so nothing changes until someone edits them.
+
 ### Scoped out of this build
 
-The original prototypes (particularly `staff.html`) sketch a much larger admin surface:
-a 12-category Masters console, per-scheme "desks" with dedicated appraisal/valuation tools,
-a Kanban pipeline view, and a multi-tab Reports & MIS section. Those were left out to keep
-this build to a working, real core lifecycle (apply → KYC → docs → credit assessment →
-sanction → disbursal) rather than a wide surface of screens with nothing behind them. The
-data model (Prisma schema) is intentionally structured so those could be added later without
-rework.
+The original prototypes (particularly `staff.html`) sketch a larger Masters surface than what's
+implemented above — CIBIL cutoff/rate-concession tables, a deviation-routing matrix, bureau
+scoring-weight config, vendor panel, branch/geography master, users & roles admin, and comms
+templates — plus, elsewhere in the prototype, per-scheme "desks" with dedicated
+appraisal/valuation tools, a Kanban pipeline view, and a multi-tab Reports & MIS section. Those
+were left out to keep this build to a working, real core lifecycle (apply → KYC → docs → credit
+assessment → sanction → disbursal) rather than a wide surface of screens with nothing behind
+them. The data model is intentionally structured so those could be added later without rework.
 
 ## Getting started
 

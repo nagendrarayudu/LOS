@@ -1,14 +1,24 @@
 export type SanctionTier = "SINGLE" | "MAKER_CHECKER" | "COMMITTEE";
 
-const SINGLE_APPROVER_CEILING = 500000; // < ₹5L : single approver (branch manager)
-const MAKER_CHECKER_CEILING = 2500000; // < ₹25L : maker-checker (regional manager)
-// >= ₹25L : credit committee, requires 3 of 5 votes
-export const COMMITTEE_QUORUM = 3;
-export const COMMITTEE_SIZE = 5;
+// Fallbacks used only if a tenant somehow has no BankParameter row.
+export const DEFAULT_SINGLE_APPROVER_CEILING = 500000; // < ₹5L : single approver (branch manager)
+export const DEFAULT_MAKER_CHECKER_CEILING = 2500000; // < ₹25L : maker-checker (regional manager)
+export const DEFAULT_COMMITTEE_QUORUM = 3; // >= ₹25L : credit committee, requires 3 of 5 votes
+export const DEFAULT_COMMITTEE_SIZE = 5;
 
-export function sanctionTierFor(amount: number): SanctionTier {
-  if (amount < SINGLE_APPROVER_CEILING) return "SINGLE";
-  if (amount < MAKER_CHECKER_CEILING) return "MAKER_CHECKER";
+export type SanctionCeilings = {
+  singleApproverCeiling: number;
+  makerCheckerCeiling: number;
+};
+
+const DEFAULT_CEILINGS: SanctionCeilings = {
+  singleApproverCeiling: DEFAULT_SINGLE_APPROVER_CEILING,
+  makerCheckerCeiling: DEFAULT_MAKER_CHECKER_CEILING,
+};
+
+export function sanctionTierFor(amount: number, ceilings: SanctionCeilings = DEFAULT_CEILINGS): SanctionTier {
+  if (amount < ceilings.singleApproverCeiling) return "SINGLE";
+  if (amount < ceilings.makerCheckerCeiling) return "MAKER_CHECKER";
   return "COMMITTEE";
 }
 

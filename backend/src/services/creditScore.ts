@@ -1,6 +1,7 @@
 import type { Customer, LoanApplication, Scheme } from "@prisma/client";
 import { prisma } from "../lib/prisma.js";
 import { seededRandom, randomInRange } from "../lib/seededRandom.js";
+import { getLoanPolicy } from "../lib/masters.js";
 
 type Weights = Record<string, number>;
 
@@ -65,6 +66,7 @@ export async function runCreditAssessment(applicationId: string) {
   });
 
   const cibil = await ensureCibilScore(application.customer);
+  application.customer.cibilScore = cibil;
   const weights = application.scheme.category === "SECURED" ? SECURED_WEIGHTS : UNSECURED_WEIGHTS;
   const rand = seededRandom(`score:${applicationId}`);
 
@@ -141,9 +143,10 @@ export async function runCreditAssessment(applicationId: string) {
     })),
   });
 
-  const policyChecks = await runPolicyChecks(application);
+  const policy = await getLoanPolicy(application.tenantId);
+  const policyChecks = await runPolicyChecks(application, policy);
   const allPoliciesPass = policyChecks.every((c) => c.passed);
-  const autoRecommendation = compositeScore >= 65 && allPoliciesPass ? "APPROVE" : "REVIEW";
+  const autoRecommendation = compositeScore >= policy.minCompositeScoreAutoApprove && allPoliciesPass ? "APPROVE" : "REVIEW";
 
   await prisma.loanApplication.update({
     where: { id: applicationId },
@@ -154,14 +157,15 @@ export async function runCreditAssessment(applicationId: string) {
 }
 
 async function runPolicyChecks(
-  application: LoanApplication & { customer: Customer; scheme: Scheme }
+  application: LoanApplication & { customer: Customer; scheme: Scheme },
+  policy: Awaited<ReturnType<typeof getLoanPolicy>>
 ) {
   const age = ageFromDob(application.customer.dob);
   const checks: Array<{ name: string; passed: boolean; note: string }> = [];
 
   checks.push({
-    name: "Age 21–58",
-    passed: age !== null && age >= 21 && age <= 58,
+    name: `Age ${policy.minAge}–${policy.maxAge}`,
+    passed: age !== null && age >= policy.minAge && age <= policy.maxAge,
     note: age === null ? "Date of birth not verified" : `Applicant age ${age}`,
   });
 
@@ -169,34 +173,46 @@ async function runPolicyChecks(
   const emi = application.emi ? Number(application.emi) : null;
   const dbr = netIncome && emi ? (emi / netIncome) * 100 : null;
   checks.push({
-    name: "DBR ≤ 50%",
-    passed: dbr !== null && dbr <= 50,
+    name: `DBR ≤ ${policy.maxDbrPercent}%`,
+    passed: dbr !== null && dbr <= policy.maxDbrPercent,
     note: dbr === null ? "Monthly income not captured" : `Debt-burden ratio ${dbr.toFixed(1)}%`,
   });
 
-  if (application.scheme.category === "SECURED" && application.scheme.ltvPercent) {
+  const ltvCeiling = application.scheme.ltvPercent ? Number(application.scheme.ltvPercent) : policy.defaultMaxLtvPercent;
+  if (application.scheme.category === "SECURED") {
     const collateralValue = application.collateralValue ? Number(application.collateralValue) : null;
     const ltv = collateralValue ? (Number(application.requestedAmount) / collateralValue) * 100 : null;
     checks.push({
-      name: `LTV ≤ ${Number(application.scheme.ltvPercent)}%`,
-      passed: ltv !== null && ltv <= Number(application.scheme.ltvPercent),
+      name: `LTV ≤ ${ltvCeiling}%`,
+      passed: ltv !== null && ltv <= ltvCeiling,
       note: ltv === null ? "Collateral value not provided" : `LTV ${ltv.toFixed(1)}%`,
     });
   } else {
-    checks.push({ name: "LTV ≤ 80%", passed: true, note: "Not applicable — unsecured" });
+    checks.push({ name: `LTV ≤ ${ltvCeiling}%`, passed: true, note: "Not applicable — unsecured" });
   }
 
+  const cibil = application.customer.cibilScore;
   checks.push({
-    name: "KYC valid",
-    passed: !!application.customer.kycVerifiedAt,
-    note: application.customer.kycVerifiedAt ? "PAN & Aadhaar verified" : "KYC incomplete",
+    name: `CIBIL ≥ ${policy.minCibilScore}`,
+    passed: cibil !== null && cibil !== undefined && cibil >= policy.minCibilScore,
+    note: cibil ? `CIBIL score ${cibil}` : "CIBIL score not fetched",
   });
 
-  checks.push({
-    name: "No active default",
-    passed: !application.customer.hasActiveDefault,
-    note: application.customer.hasActiveDefault ? "Active default on record" : "Clean repayment record",
-  });
+  if (policy.requireKyc) {
+    checks.push({
+      name: "KYC valid",
+      passed: !!application.customer.kycVerifiedAt,
+      note: application.customer.kycVerifiedAt ? "PAN & Aadhaar verified" : "KYC incomplete",
+    });
+  }
+
+  if (policy.blockActiveDefault) {
+    checks.push({
+      name: "No active default",
+      passed: !application.customer.hasActiveDefault,
+      note: application.customer.hasActiveDefault ? "Active default on record" : "Clean repayment record",
+    });
+  }
 
   await prisma.policyCheck.deleteMany({ where: { applicationId: application.id } });
   await prisma.policyCheck.createMany({

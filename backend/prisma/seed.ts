@@ -136,6 +136,56 @@ async function main() {
     });
   }
 
+  await prisma.loanParameter.upsert({
+    where: { tenantId: tenant.id },
+    update: {},
+    create: {
+      tenantId: tenant.id,
+      processingFeePercent: 1,
+      gstPercent: 18,
+      penalInterestPercent: 24,
+      foreclosurePercent: 2,
+      bounceChargeAmount: 500,
+      lateFeeAmount: 250,
+      coolingOffDays: 3,
+      moratoriumMonths: 0,
+    },
+  });
+
+  await prisma.bankParameter.upsert({
+    where: { tenantId: tenant.id },
+    update: {},
+    create: {
+      tenantId: tenant.id,
+      bankName: "Sahyog Cooperative Bank",
+      cbsCode: "SAHYOG01",
+      ifscPrefix: "SHYG0",
+      baseRatePercent: 8.5,
+      singleApproverCeiling: 500000,
+      makerCheckerCeiling: 2500000,
+      committeeQuorum: 3,
+      committeeSize: 5,
+      neftCutoffTime: "16:30",
+      workingDays: "Mon–Sat",
+    },
+  });
+
+  await prisma.loanPolicy.upsert({
+    where: { tenantId: tenant.id },
+    update: {},
+    create: {
+      tenantId: tenant.id,
+      minAge: 21,
+      maxAge: 58,
+      maxDbrPercent: 50,
+      defaultMaxLtvPercent: 80,
+      minCibilScore: 650,
+      minCompositeScoreAutoApprove: 65,
+      requireKyc: true,
+      blockActiveDefault: true,
+    },
+  });
+
   const passwordHash = await bcrypt.hash(DEMO_PASSWORD, 10);
   for (const user of STAFF_USERS) {
     await prisma.staffUser.upsert({

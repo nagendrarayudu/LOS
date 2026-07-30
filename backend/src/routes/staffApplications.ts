@@ -5,8 +5,9 @@ import { requireStaff } from "../middleware/auth.js";
 import { asyncHandler, HttpError } from "../middleware/errorHandler.js";
 import { runCreditAssessment } from "../services/creditScore.js";
 import { moveToReview, requestMoreDocs, recordSanctionDecision, sanctionedAmountFor } from "../services/sanctionWorkflow.js";
-import { sanctionTierFor, sanctionTierLabel, COMMITTEE_QUORUM, COMMITTEE_SIZE } from "../services/sanctionRouting.js";
+import { sanctionTierFor, sanctionTierLabel } from "../services/sanctionRouting.js";
 import { simulatePennyDrop, generateUtr, generateNeftBatchFile } from "../services/disbursal.js";
+import { getBankParameter } from "../lib/masters.js";
 
 export const staffApplicationsRouter = Router();
 staffApplicationsRouter.use(requireStaff());
@@ -87,7 +88,8 @@ staffApplicationsRouter.get(
     });
     if (!application) throw new HttpError(404, "Application not found");
 
-    const tier = sanctionTierFor(Number(application.requestedAmount));
+    const bankParams = await getBankParameter(req.staff!.tenantId);
+    const tier = sanctionTierFor(Number(application.requestedAmount), bankParams);
     const committeeDecisions = application.sanctionDecisions.filter((d) => d.level === "COMMITTEE");
     const approveCount = committeeDecisions.filter((d) => d.decision === "APPROVED").length;
     const rejectCount = committeeDecisions.filter((d) => d.decision === "REJECTED").length;
@@ -96,7 +98,7 @@ staffApplicationsRouter.get(
       ...application,
       sanctionTier: tier,
       sanctionTierLabel: sanctionTierLabel(tier),
-      committeeVotes: { approveCount, rejectCount, quorum: COMMITTEE_QUORUM, size: COMMITTEE_SIZE },
+      committeeVotes: { approveCount, rejectCount, quorum: bankParams.committeeQuorum, size: bankParams.committeeSize },
     });
   })
 );

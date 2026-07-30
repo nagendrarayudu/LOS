@@ -367,6 +367,48 @@
   font-size: 12.5px;
 }
 
+.sp-tabs {
+  display: flex;
+  gap: 4px;
+  border-bottom: 1px solid var(--sp-line);
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+.sp-tab {
+  padding: 10px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--sp-ink3);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+}
+.sp-tab:hover {
+  color: var(--sp-ink);
+}
+.sp-tab.active {
+  color: var(--sp-navy);
+  border-bottom-color: var(--sp-navy);
+}
+
+.sp-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.sp-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.sp-field label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--sp-ink3);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
 .sp-login-wrap {
   min-height: 100vh;
   display: flex;

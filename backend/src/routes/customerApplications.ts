@@ -10,6 +10,12 @@ import { generateApplicationNumber } from "../lib/applicationNumber.js";
 import { upload } from "../lib/upload.js";
 import { runCreditAssessment } from "../services/creditScore.js";
 import { getAadhaarEkycProvider } from "../services/aadhaarEkyc.js";
+import { getLoanParameter } from "../lib/masters.js";
+
+async function feePercentFor(tenantId: string) {
+  const params = await getLoanParameter(tenantId);
+  return params.processingFeePercent * (1 + params.gstPercent / 100);
+}
 
 export const customerApplicationsRouter = Router();
 customerApplicationsRouter.use(requireCustomer);
@@ -45,7 +51,8 @@ customerApplicationsRouter.post(
       throw new HttpError(400, `Tenure must be between ${scheme.minTenureMonths} and ${scheme.maxTenureMonths} months`);
     }
 
-    const summary = repaymentSummary(body.requestedAmount, Number(scheme.interestRate), body.tenureMonths, scheme.repaymentType);
+    const feePct = await feePercentFor(req.customer!.tenantId);
+    const summary = repaymentSummary(body.requestedAmount, Number(scheme.interestRate), body.tenureMonths, scheme.repaymentType, feePct);
 
     const application = await prisma.loanApplication.create({
       data: {
@@ -233,7 +240,8 @@ customerApplicationsRouter.put(
       throw new HttpError(400, `Tenure must be between ${scheme.minTenureMonths} and ${scheme.maxTenureMonths} months`);
     }
 
-    const summary = repaymentSummary(body.requestedAmount, Number(scheme.interestRate), body.tenureMonths, scheme.repaymentType);
+    const feePct = await feePercentFor(req.customer!.tenantId);
+    const summary = repaymentSummary(body.requestedAmount, Number(scheme.interestRate), body.tenureMonths, scheme.repaymentType, feePct);
 
     const updated = await prisma.loanApplication.update({
       where: { id: application.id },

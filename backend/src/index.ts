@@ -8,6 +8,7 @@ import { schemesRouter } from "./routes/schemes.js";
 import { customerApplicationsRouter } from "./routes/customerApplications.js";
 import { customerProfileRouter } from "./routes/customerProfile.js";
 import { staffApplicationsRouter } from "./routes/staffApplications.js";
+import { mastersRouter } from "./routes/masters.js";
 import { customerDigilockerRouter, digilockerWebhookRouter } from "./routes/digilocker.js";
 import { errorHandler } from "./middleware/errorHandler.js";
 
@@ -26,6 +27,7 @@ app.use("/api/customer/applications", customerDigilockerRouter);
 app.use("/api/customer/applications", customerApplicationsRouter);
 app.use("/api/customer/me", customerProfileRouter);
 app.use("/api/staff", staffApplicationsRouter);
+app.use("/api/staff/masters", mastersRouter);
 app.use("/api/webhooks/signzy", digilockerWebhookRouter);
 
 app.use(errorHandler);

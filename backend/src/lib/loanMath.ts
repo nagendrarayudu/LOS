@@ -63,11 +63,12 @@ export function repaymentSummary(
   principal: number,
   annualRatePct: number,
   tenureMonths: number,
-  repaymentType: RepaymentType
+  repaymentType: RepaymentType,
+  feePct = PROCESSING_FEE_PCT
 ) {
   const base = repaymentType === "BULLET" ? calcBullet(principal, annualRatePct, tenureMonths) : calcEmi(principal, annualRatePct, tenureMonths);
-  const processingFeeAmount = calcProcessingFee(principal);
-  const aprPercent = calcApr(annualRatePct, tenureMonths);
+  const processingFeeAmount = calcProcessingFee(principal, feePct);
+  const aprPercent = calcApr(annualRatePct, tenureMonths, feePct);
   const netDisbursedAmount = principal - processingFeeAmount;
   return { ...base, processingFeeAmount, aprPercent, netDisbursedAmount };
 }
