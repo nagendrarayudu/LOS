@@ -5,7 +5,9 @@
   "description": "Sahyog LOS - Loan Origination System for cooperative and rural banks",
   "workspaces": [
     "backend",
-    "frontend"
+    "frontend",
+    "biab/backend",
+    "biab/frontend"
   ],
   "scripts": {
     "dev:backend": "npm run dev --workspace backend",
@@ -14,6 +16,13 @@
     "build:frontend": "npm run build --workspace frontend",
     "prisma:generate": "npm run prisma:generate --workspace backend",
     "prisma:migrate": "npm run prisma:migrate --workspace backend",
-    "prisma:seed": "npm run prisma:seed --workspace backend"
+    "prisma:seed": "npm run prisma:seed --workspace backend",
+    "dev:biab-backend": "npm run dev --workspace biab-backend",
+    "dev:biab-frontend": "npm run dev --workspace biab-frontend",
+    "build:biab-backend": "npm run build --workspace biab-backend",
+    "build:biab-frontend": "npm run build --workspace biab-frontend",
+    "prisma:generate:biab": "npm run prisma:generate --workspace biab-backend",
+    "prisma:migrate:biab": "npm run prisma:migrate --workspace biab-backend",
+    "prisma:seed:biab": "npm run prisma:seed --workspace biab-backend"
   }
 }

@@ -5,14 +5,13 @@ import { CURRENCY_BY_COUNTRY, formatMoney } from '../../lib/currency'
 
 const cur = CURRENCY_BY_COUNTRY.IN
 
-type Tab = 'products' | 'loanparams' | 'bankparams' | 'policy' | 'coa'
+type Tab = 'products' | 'loanparams' | 'bankparams' | 'policy'
 
 const TABS: Array<{ id: Tab; label: string }> = [
   { id: 'products', label: 'Products & schemes' },
   { id: 'loanparams', label: 'Loan parameters' },
   { id: 'bankparams', label: 'Bank parameters' },
   { id: 'policy', label: 'Loan policy' },
-  { id: 'coa', label: 'Chart of accounts' },
 ]
 
 export function Masters() {
@@ -41,7 +40,6 @@ export function Masters() {
       {tab === 'loanparams' && <LoanParametersPanel isAdmin={isAdmin} />}
       {tab === 'bankparams' && <BankParametersPanel isAdmin={isAdmin} />}
       {tab === 'policy' && <LoanPolicyPanel isAdmin={isAdmin} />}
-      {tab === 'coa' && <GLAccountsPanel />}
     </div>
   )
 }
@@ -603,95 +601,6 @@ function LoanPolicyPanel({ isAdmin }: { isAdmin: boolean }) {
           {saved && <span style={{ fontSize: 12, color: 'var(--sp-ok)' }}>Saved</span>}
         </div>
       )}
-    </div>
-  )
-}
-
-// ── Chart of accounts (GL) ────────────────────────────────
-
-type GLAccount = {
-  id: string
-  code: string
-  name: string
-  cls: 'ASSETS' | 'LIABILITIES' | 'EQUITY' | 'INCOME' | 'EXPENSES' | 'CONTINGENT'
-  level: number
-  parentId: string | null
-  isLeaf: boolean
-  normalBalance: string | null
-  currency: string | null
-  mapLabel: string | null
-  subGroup: string | null
-  notes: string | null
-  rangeFrom: string | null
-  rangeTo: string | null
-}
-
-const GL_CLASSES: Array<GLAccount['cls'] | 'ALL'> = ['ALL', 'ASSETS', 'LIABILITIES', 'EQUITY', 'INCOME', 'EXPENSES', 'CONTINGENT']
-
-function GLAccountsPanel() {
-  const auth = useStaffAuth()
-  const [rows, setRows] = useState<GLAccount[]>([])
-  const [cls, setCls] = useState<GLAccount['cls'] | 'ALL'>('ALL')
-  const [query, setQuery] = useState('')
-
-  useEffect(() => {
-    apiRequest<GLAccount[]>('/staff/masters/gl-accounts', { token: auth.token }).then(setRows)
-  }, [auth.token])
-
-  const q = query.trim().toLowerCase()
-  const visible = rows.filter((r) => {
-    if (cls !== 'ALL' && r.cls !== cls) return false
-    if (q && !r.code.includes(q) && !r.name.toLowerCase().includes(q)) return false
-    return true
-  })
-
-  return (
-    <div>
-      <p className="sp-sub" style={{ marginBottom: 16 }}>
-        Bank-wide chart of accounts (main group → sub group → posting group), ported from the BIAB core-banking
-        chart-of-accounts reference. Reference data — not yet editable from here.
-      </p>
-      <div style={{ display: 'flex', gap: 12, marginBottom: 14, alignItems: 'center' }}>
-        <select className="sp-select" value={cls} onChange={(e) => setCls(e.target.value as GLAccount['cls'] | 'ALL')} style={{ minWidth: 200 }}>
-          {GL_CLASSES.map((c) => (
-            <option key={c} value={c}>
-              {c === 'ALL' ? 'All main groups' : c}
-            </option>
-          ))}
-        </select>
-        <input
-          className="sp-input"
-          placeholder="Search code or name…"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          style={{ maxWidth: 260 }}
-        />
-        <span style={{ fontSize: 12, color: 'var(--sp-ink3)' }}>{visible.length} accounts</span>
-      </div>
-      <table className="sp-table">
-        <thead>
-          <tr>
-            <th>Code</th>
-            <th>Name</th>
-            <th>Class</th>
-            <th>Dr/Cr</th>
-            <th>Currency</th>
-            <th>Statement mapping</th>
-          </tr>
-        </thead>
-        <tbody>
-          {visible.map((r) => (
-            <tr key={r.id}>
-              <td style={{ fontFamily: 'monospace', paddingLeft: 12 + (r.level - 1) * 20 }}>{r.code}</td>
-              <td style={{ fontWeight: r.isLeaf ? 400 : 700 }}>{r.name}</td>
-              <td>{r.cls}</td>
-              <td>{r.normalBalance ?? ''}</td>
-              <td>{r.currency ?? ''}</td>
-              <td style={{ fontSize: 12, color: 'var(--sp-ink3)' }}>{r.mapLabel ?? ''}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
     </div>
   )
 }

@@ -1,54 +1,9 @@
-import { PrismaClient, SchemeCategory, StaffRole, RepaymentType, GLAccountClass } from "@prisma/client";
+import { PrismaClient, SchemeCategory, StaffRole, RepaymentType } from "@prisma/client";
 import bcrypt from "bcryptjs";
-import { readFileSync } from "fs";
-import { fileURLToPath } from "url";
-import { dirname, join } from "path";
 
 const prisma = new PrismaClient();
 
 const DEMO_PASSWORD = "Passw0rd!";
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
-
-// Chart of accounts, ported from the BIAB (Bank In A Box) CBS prototype's chart-of-accounts
-// sample generator — a 3-level IFRS-aligned bank GL tree (main group -> sub group -> posting
-// group). `parentCode` is resolved to a real `parentId` in `seedGlAccounts` below.
-type GlAccountSeed = {
-  code: string;
-  name: string;
-  cls: GLAccountClass;
-  level: number;
-  parentCode: string | null;
-  isLeaf: boolean;
-  normalBalance: string | null;
-  currency: string | null;
-  mapLabel: string | null;
-  subGroup: string | null;
-  notes: string | null;
-  rangeFrom: string | null;
-  rangeTo: string | null;
-};
-
-const GL_ACCOUNTS: GlAccountSeed[] = JSON.parse(readFileSync(join(__dirname, "data/gl-accounts.json"), "utf8"));
-
-async function seedGlAccounts(tenantId: string) {
-  const idByCode = new Map<string, string>();
-  for (const row of GL_ACCOUNTS) {
-    const { parentCode, ...data } = row;
-    const account = await prisma.gLAccount.upsert({
-      where: { tenantId_code: { tenantId, code: row.code } },
-      update: data,
-      create: { ...data, tenantId },
-    });
-    idByCode.set(row.code, account.id);
-  }
-  for (const row of GL_ACCOUNTS) {
-    if (!row.parentCode) continue;
-    const parentId = idByCode.get(row.parentCode);
-    if (!parentId) continue;
-    await prisma.gLAccount.update({ where: { tenantId_code: { tenantId, code: row.code } }, data: { parentId } });
-  }
-}
 
 const SCHEMES: Array<{
   key: string;
@@ -231,8 +186,6 @@ async function main() {
     },
   });
 
-  await seedGlAccounts(tenant.id);
-
   const passwordHash = await bcrypt.hash(DEMO_PASSWORD, 10);
   for (const user of STAFF_USERS) {
     await prisma.staffUser.upsert({
@@ -243,7 +196,7 @@ async function main() {
   }
 
   // eslint-disable-next-line no-console
-  console.log(`Seeded tenant "${tenant.name}" with ${SCHEMES.length} schemes, ${GL_ACCOUNTS.length} GL accounts and ${STAFF_USERS.length} staff users.`);
+  console.log(`Seeded tenant "${tenant.name}" with ${SCHEMES.length} schemes and ${STAFF_USERS.length} staff users.`);
   // eslint-disable-next-line no-console
   console.log(`Demo staff password: ${DEMO_PASSWORD}`);
 }

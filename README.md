@@ -108,3 +108,9 @@ frontend/
   src/pages/staff/         staff auth, pipeline, application detail, sanction, disbursal
 design/                    original HTML prototypes (visual/UX reference only)
 ```
+
+## BIAB — Bank In A Box
+
+`biab/` is a separate, standalone project in this repo (own backend, frontend and database) —
+a core-banking-system reference, currently just the Chart of Accounts, ported from the BIAB CBS
+navigation prototype. It doesn't share data or code with Sahyog LOS above. See `biab/README.md`.

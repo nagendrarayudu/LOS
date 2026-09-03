@@ -22,7 +22,6 @@ model Tenant {
   loanParameter LoanParameter?
   bankParameter BankParameter?
   loanPolicy    LoanPolicy?
-  glAccounts    GLAccount[]
 }
 
 // ── Staff / auth ─────────────────────────────────────────
@@ -216,45 +215,6 @@ model LoanPolicy {
   requireKyc                    Boolean  @default(true)
   blockActiveDefault            Boolean  @default(true)
   updatedAt                     DateTime @updatedAt
-}
-
-// ── Chart of Accounts (GL) ────────────────────────────────
-// Bank-wide GL account tree, seeded from the BIAB CBS chart-of-accounts reference
-// (main group → sub group → posting-group leaf). Viewable from Masters; not yet editable —
-// the source is a fixed IFRS-aligned reference structure, not per-tenant configuration.
-
-enum GLAccountClass {
-  ASSETS
-  LIABILITIES
-  EQUITY
-  INCOME
-  EXPENSES
-  CONTINGENT
-}
-
-model GLAccount {
-  id            String         @id @default(cuid())
-  tenantId      String
-  tenant        Tenant         @relation(fields: [tenantId], references: [id])
-  code          String
-  name          String
-  cls           GLAccountClass
-  level         Int // 1 = main group, 2 = sub group, 3 = posting group (leaf)
-  parentId      String?
-  parent        GLAccount?     @relation("GLAccountChildren", fields: [parentId], references: [id])
-  children      GLAccount[]    @relation("GLAccountChildren")
-  isLeaf        Boolean        @default(false) // leaf accounts are where GL postings actually land
-  normalBalance String? // Dr | Cr
-  currency      String? // ZWG | USD | Multi
-  mapLabel      String? // financial-statement line item this account rolls up to (e.g. "SOFP - Cash & bank balances")
-  subGroup      String?
-  notes         String?
-  rangeFrom     String?
-  rangeTo       String?
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
-
-  @@unique([tenantId, code])
 }
 
 // ── Applications ─────────────────────────────────────────
