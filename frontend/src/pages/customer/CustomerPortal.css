@@ -433,6 +433,171 @@
   margin-top: 2px;
 }
 
+/* ── Sectioned form (CIF / KYC) design system ────────────── */
+.cp-section {
+  padding-top: 24px;
+  margin-top: 24px;
+  border-top: 1px solid var(--line);
+}
+.cp-section:first-child {
+  padding-top: 0;
+  margin-top: 0;
+  border-top: none;
+}
+.cp-section-head {
+  margin-bottom: 16px;
+}
+.cp-section-eyebrow {
+  font-size: 10.5px;
+  font-weight: 700;
+  color: var(--saffron);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  margin-bottom: 4px;
+}
+.cp-section-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--navy);
+}
+.cp-section-desc {
+  font-size: 12.5px;
+  color: var(--stone);
+  margin-top: 3px;
+  line-height: 1.5;
+}
+
+.cp-field-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 18px 14px;
+}
+.cp-field-grid .cp-field {
+  margin-bottom: 0;
+}
+.cp-field-full {
+  grid-column: 1 / -1;
+}
+.cp-label .req {
+  color: var(--fail);
+  margin-left: 2px;
+}
+.cp-helper {
+  font-size: 11px;
+  color: var(--stone2);
+  margin-top: 5px;
+  line-height: 1.4;
+}
+.cp-field.invalid .cp-input,
+.cp-field.invalid .cp-select {
+  border-color: var(--fail);
+  background: #fffbfb;
+}
+.cp-field.invalid .cp-input:focus,
+.cp-field.invalid .cp-select:focus {
+  outline-color: var(--fail);
+}
+.cp-field-err {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  color: var(--fail);
+  margin-top: 5px;
+  line-height: 1.4;
+}
+.cp-field-err::before {
+  content: '';
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--fail);
+  flex-shrink: 0;
+}
+.cp-field.mono .cp-input {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  letter-spacing: 0.3px;
+}
+
+.cp-prefix-wrap {
+  display: flex;
+}
+.cp-prefix {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 40px;
+  padding: 0 10px;
+  height: 48px;
+  border: 1px solid var(--line);
+  border-right: none;
+  border-radius: 10px 0 0 10px;
+  background: var(--line2);
+  color: var(--stone);
+  font-size: 13px;
+  font-weight: 600;
+}
+.cp-prefix-wrap .cp-input {
+  border-radius: 0 10px 10px 0;
+}
+
+.cp-badge-ok {
+  background: var(--green-soft);
+  color: #0a6e4d;
+}
+.cp-badge-warn {
+  background: var(--amber-soft);
+  color: #92400e;
+}
+.cp-badge-neutral {
+  background: var(--line2);
+  color: var(--stone);
+}
+.cp-badge-fail {
+  background: var(--fail-soft);
+  color: var(--fail);
+}
+
+.cp-info-panel {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: var(--info-soft);
+  color: var(--info);
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-size: 12.5px;
+  line-height: 1.5;
+  margin-bottom: 16px;
+}
+.cp-info-panel b {
+  font-weight: 700;
+}
+
+.cp-demo-panel {
+  border: 1.5px dashed var(--line);
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 11.5px;
+  color: var(--stone);
+  margin-bottom: 24px;
+  display: flex;
+  gap: 8px 12px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.cp-demo-panel .tag {
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--stone2);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 2px 6px;
+}
+
 .cp-back {
   display: inline-flex;
   align-items: center;
