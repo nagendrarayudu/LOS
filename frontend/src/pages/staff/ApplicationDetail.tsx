@@ -24,9 +24,19 @@ type Detail = {
   customer: {
     name: string | null
     mobile: string
+    email: string | null
+    gender: string | null
     panNumber: string | null
+    panVerifiedAt: string | null
     aadhaarLast4: string | null
+    aadhaarVerifiedAt: string | null
+    kycVerifiedAt: string | null
     dob: string | null
+    addressLine1: string | null
+    addressLine2: string | null
+    city: string | null
+    state: string | null
+    pincode: string | null
     employer: string | null
     occupation: string | null
     netIncome: string | null
@@ -124,39 +134,88 @@ export function ApplicationDetail() {
       <div className="sp-grid-2">
         <div>
           <div className="sp-card">
-            <div className="sp-card-title">Applicant</div>
-            <div className="sp-kv-grid">
-              <div className="sp-kv">
-                <div className="k">Name</div>
-                <div className="v">{app.customer.name ?? '—'}</div>
+            <div className="sp-cust-header">
+              <div>
+                <div className="sp-cust-name">{app.customer.name ?? 'Name not on file'}</div>
+                <div className="sp-cust-meta">
+                  {app.applicantType === 'INDIVIDUAL' ? 'Individual' : 'Enterprise'} customer · Branch {app.branch ?? '—'}
+                </div>
               </div>
-              <div className="sp-kv">
-                <div className="k">Mobile</div>
-                <div className="v">{app.customer.mobile}</div>
+              <div className="sp-cust-badges">
+                <span className={`sp-badge ${app.customer.kycVerifiedAt ? 'sp-badge-ok' : 'sp-badge-warn'}`}>{app.customer.kycVerifiedAt ? '✓ KYC verified' : 'KYC pending'}</span>
+                {app.customer.cibilScore !== null && <span className="sp-badge sp-badge-neutral">CIBIL {app.customer.cibilScore}</span>}
               </div>
-              <div className="sp-kv">
-                <div className="k">PAN</div>
-                <div className="v">{app.customer.panNumber ?? '—'}</div>
+            </div>
+
+            <div className="sp-subsection">
+              <div className="sp-subsection-title">Identification</div>
+              <div className="sp-kv-grid">
+                <div className="sp-kv">
+                  <div className="k">Date of birth</div>
+                  <div className="v">{app.customer.dob ? new Date(app.customer.dob).toLocaleDateString() : '—'}</div>
+                </div>
+                <div className="sp-kv">
+                  <div className="k">Gender</div>
+                  <div className="v">{app.customer.gender ?? '—'}</div>
+                </div>
+                <div className="sp-kv">
+                  <div className="k">
+                    PAN {app.customer.panVerifiedAt ? <span className="sp-badge sp-badge-ok">Verified</span> : app.customer.panNumber ? <span className="sp-badge sp-badge-warn">Unverified</span> : null}
+                  </div>
+                  <div className="v sp-sensitive">{app.customer.panNumber ?? '—'}</div>
+                </div>
+                <div className="sp-kv">
+                  <div className="k">
+                    Aadhaar {app.customer.aadhaarVerifiedAt ? <span className="sp-badge sp-badge-ok">Verified</span> : app.customer.aadhaarLast4 ? <span className="sp-badge sp-badge-warn">Unverified</span> : null}
+                  </div>
+                  <div className="v sp-sensitive">{app.customer.aadhaarLast4 ? `XXXX XXXX ${app.customer.aadhaarLast4}` : '—'}</div>
+                </div>
               </div>
-              <div className="sp-kv">
-                <div className="k">Aadhaar</div>
-                <div className="v">{app.customer.aadhaarLast4 ? `XXXX XXXX ${app.customer.aadhaarLast4}` : '—'}</div>
+            </div>
+
+            <div className="sp-subsection">
+              <div className="sp-subsection-title">Contact</div>
+              <div className="sp-kv-grid">
+                <div className="sp-kv">
+                  <div className="k">Mobile</div>
+                  <div className="v">{app.customer.mobile}</div>
+                </div>
+                <div className="sp-kv">
+                  <div className="k">Email</div>
+                  <div className="v">{app.customer.email ?? '—'}</div>
+                </div>
               </div>
-              <div className="sp-kv">
-                <div className="k">Employer</div>
-                <div className="v">{app.customer.employer ?? '—'}</div>
+            </div>
+
+            <div className="sp-subsection">
+              <div className="sp-subsection-title">Address</div>
+              <div className="sp-kv-grid">
+                <div className="sp-kv" style={{ gridColumn: '1 / -1' }}>
+                  <div className="k">Residential address</div>
+                  <div className="v">
+                    {app.customer.addressLine1
+                      ? [app.customer.addressLine1, app.customer.addressLine2, app.customer.city, app.customer.state, app.customer.pincode].filter(Boolean).join(', ')
+                      : '—'}
+                  </div>
+                </div>
               </div>
-              <div className="sp-kv">
-                <div className="k">Net income / mo</div>
-                <div className="v">{app.customer.netIncome ? formatMoney(Number(app.customer.netIncome), cur) : '—'}</div>
-              </div>
-              <div className="sp-kv">
-                <div className="k">Applicant type</div>
-                <div className="v">{app.applicantType}</div>
-              </div>
-              <div className="sp-kv">
-                <div className="k">Branch</div>
-                <div className="v">{app.branch ?? '—'}</div>
+            </div>
+
+            <div className="sp-subsection">
+              <div className="sp-subsection-title">Employment &amp; income</div>
+              <div className="sp-kv-grid">
+                <div className="sp-kv">
+                  <div className="k">Occupation</div>
+                  <div className="v">{app.customer.occupation ?? '—'}</div>
+                </div>
+                <div className="sp-kv">
+                  <div className="k">Employer</div>
+                  <div className="v">{app.customer.employer ?? '—'}</div>
+                </div>
+                <div className="sp-kv">
+                  <div className="k">Net income / mo</div>
+                  <div className="v">{app.customer.netIncome ? formatMoney(Number(app.customer.netIncome), cur) : '—'}</div>
+                </div>
               </div>
             </div>
           </div>
@@ -191,7 +250,7 @@ export function ApplicationDetail() {
                   {d.type.replaceAll('_', ' ')}
                 </a>
                 {d.verified ? (
-                  <span style={{ color: 'var(--sp-ok)' }}>✓ Verified</span>
+                  <span className="sp-badge sp-badge-ok">✓ Verified</span>
                 ) : (
                   <button className="sp-btn sp-btn-outline" disabled={busy} onClick={() => act(() => apiRequest(`/staff/applications/${app.id}/documents/${d.id}/verify`, { method: 'POST', token: auth.token }))}>
                     Verify
@@ -207,7 +266,7 @@ export function ApplicationDetail() {
             {app.policyChecks.map((c) => (
               <div className="sp-policy-check" key={c.id}>
                 <span>{c.name}</span>
-                <span style={{ color: c.passed ? 'var(--sp-ok)' : 'var(--sp-fail)', fontWeight: 700 }}>
+                <span className={`sp-badge ${c.passed ? 'sp-badge-ok' : 'sp-badge-fail'}`}>
                   {c.passed ? '✓ Pass' : '✕ Fail'} {c.note ? `· ${c.note}` : ''}
                 </span>
               </div>

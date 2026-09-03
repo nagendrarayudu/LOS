@@ -196,6 +196,8 @@
   font-weight: 700;
   padding: 3px 10px;
   border-radius: 999px;
+  text-transform: none;
+  letter-spacing: normal;
 }
 
 .sp-btn {
@@ -407,6 +409,80 @@
   color: var(--sp-ink3);
   text-transform: uppercase;
   letter-spacing: 0.3px;
+}
+
+/* ── Customer / CIF panel ─────────────────────────────────── */
+.sp-cust-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding-bottom: 16px;
+  margin-bottom: 16px;
+  border-bottom: 1px solid var(--sp-line);
+}
+.sp-cust-name {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--sp-ink);
+}
+.sp-cust-meta {
+  font-size: 12.5px;
+  color: var(--sp-ink3);
+  margin-top: 3px;
+}
+.sp-cust-badges {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.sp-subsection {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--sp-line2);
+}
+.sp-subsection:first-of-type {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: none;
+}
+.sp-subsection-title {
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: var(--sp-ink4);
+  margin-bottom: 10px;
+}
+
+.sp-badge-ok {
+  background: #d1fae5;
+  color: var(--sp-ok);
+}
+.sp-badge-warn {
+  background: #fef3c7;
+  color: var(--sp-warn);
+}
+.sp-badge-fail {
+  background: #fee2e2;
+  color: var(--sp-fail);
+}
+.sp-badge-neutral {
+  background: var(--sp-line2);
+  color: var(--sp-ink3);
+}
+
+.sp-doc-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sp-sensitive {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  letter-spacing: 0.2px;
 }
 
 .sp-login-wrap {

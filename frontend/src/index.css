@@ -16,7 +16,11 @@
   --green: #10b981;
   --green-soft: #ecfdf5;
   --fail: #ef4444;
+  --fail-soft: #fee2e2;
   --amber: #d4841a;
+  --amber-soft: #fef3c7;
+  --info: #1b3a6b;
+  --info-soft: #eef2f8;
 }
 
 *,
