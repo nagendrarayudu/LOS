@@ -165,6 +165,16 @@ const loanPolicySchema = z.object({
   blockActiveDefault: z.boolean(),
 });
 
+// ── Chart of accounts (GL) — reference data, view-only ────
+
+mastersRouter.get(
+  "/gl-accounts",
+  asyncHandler(async (req, res) => {
+    const accounts = await prisma.gLAccount.findMany({ where: { tenantId: req.staff!.tenantId }, orderBy: { code: "asc" } });
+    res.json(accounts);
+  })
+);
+
 mastersRouter.get(
   "/loan-policy",
   asyncHandler(async (req, res) => {
